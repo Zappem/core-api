@@ -9,7 +9,7 @@ module.exports = function(app){
         .get(projectController.showAll);
 
     app.route('/projects/:id')
-        .post(projectController.updateById)
+        .put(projectController.updateById)
         .get(projectController.findById);
 
     app.route('/exceptions')
