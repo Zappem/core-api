@@ -42,7 +42,7 @@ module.exports = {
 
     addNewException: function(data){
         return Services.Exceptions.create(data).then(function(exc){
-            data.error_id = data._id;
+            data.error_id = exc._id;
             return Services.Instances.create(data);
         });
     }
