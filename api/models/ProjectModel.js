@@ -18,7 +18,7 @@ class Project extends Document {
             default: Date.now
         };
 
-        this.lastOccurence = {
+        this.lastOccurrence = {
             type: Date,
             default: null
         };
