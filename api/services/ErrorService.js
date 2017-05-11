@@ -30,7 +30,11 @@ module.exports = {
     },
 
     alreadyExists: function(data){
-        return Services.Exceptions.findByMessage(data.message);
+        return Services.Exceptions.findOne({
+            message: data.message,
+            language: data.language,
+            environment: data.environment
+        });
     },
 
     addNewInstance: function(data){

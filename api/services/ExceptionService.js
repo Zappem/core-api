@@ -6,7 +6,11 @@ var Services = {
 module.exports = {
 
     findByMessage: function (message) {
-        return Exception.findOne({message:message});
+        return this.findOne({message:message});
+    },
+
+    findOne: function(query) {
+        return Exception.findOne(query);
     },
 
     findByProjectId: function(id) {

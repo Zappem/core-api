@@ -7,7 +7,6 @@ class Exception extends Document {
 
         this.message = {
             type: String,
-            unique: true,
             required: true
         };
 
@@ -25,6 +24,16 @@ class Exception extends Document {
 
         this.project = {
             type: Project,
+            required: true
+        };
+
+        this.language = {
+            type: String,
+            required: true
+        };
+
+        this.environment = {
+            type: String,
             required: true
         };
 
