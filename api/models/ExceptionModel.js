@@ -23,7 +23,10 @@ class Exception extends Document {
 
         this.stack = [Stack];
 
-        this.project = Project;
+        this.project = {
+            type: Project,
+            required: true
+        };
 
         this.firstSeen = {
             type: Date,

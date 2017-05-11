@@ -1,4 +1,7 @@
 var Exception = require('../models/ExceptionModel.js');
+var Services = {
+    Projects: require('./ProjectService.js')
+};
 
 module.exports = {
 
@@ -7,7 +10,14 @@ module.exports = {
     },
 
     create: function (data) {
-        return Exception.create(data).save();
+        // Get the project first.
+        return Services.Projects.findById(data.projectID).then(function(proj){
+            data.project = {
+                project_id: proj._id,
+                name: proj.name
+            };
+            return Exception.create(data).save();
+        });
     },
 
     incrementTimes: function(exception_id){
