@@ -34,10 +34,16 @@ module.exports = {
     },
 
     addNewInstance: function(data){
-        return Services.Instances.create(data);
+        return Promise.all([
+            Services.Instances.create(data),
+            Services.Exceptions.incrementTimes(data.error_id)
+        ]);
     },
 
     addNewException: function(data){
-        return Services.Exceptions.create(data);
+        return Services.Exceptions.create(data).then(function(exc){
+            data.error_id = data._id;
+            return Services.Instances.create(data);
+        });
     }
 };
