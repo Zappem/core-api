@@ -9,6 +9,10 @@ module.exports = {
         return Exception.findOne({message:message});
     },
 
+    findByProjectId: function(id) {
+        return Exception.find({"project.project_id": id});
+    },
+
     create: function (data) {
         // Get the project first.
         return Services.Projects.findById(data.projectID).then(function(proj){
