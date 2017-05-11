@@ -4,26 +4,29 @@ module.exports = function(app){
     var Services = app.services;
 
     return {
-        all: function(){
-            return Project.find({});
+        all: function(callback){
+            return Project.find({}).then(function(proj){
+                return proj;
+            });
         },
 
         findById: function(id){
-            return Project.find({_id: id});
+            return Project.find({_id: id}).then(function(proj){
+                return proj;
+            });
         },
 
-        create: function(data){
+        create: function(data, callback){
             // TODO: Validation
             var create = Project.create({
-                name: data.name,
-
+                name: data.name
             });
 
             data.team.forEach(function(userid){
                 //create.addTeamMember
-                Services.Users.
             });
-            return create.save();
+
+            return create.save().then(callback);
         },
 
         search: function(term){
