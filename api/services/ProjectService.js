@@ -1,39 +1,30 @@
-module.exports = function(app){
+var Project = require('../models/ProjectModel.js');
 
-    var Project = require('../models/ProjectModel.js');
-    var Services = app.services;
+module.exports = {
 
-    return {
-        all: function(callback){
-            return Project.find({}).then(function(proj){
-                return proj;
-            });
-        },
+    all: function(){
+        return Project.find({});
+    },
 
-        findById: function(id){
-            return Project.find({_id: id}).then(function(proj){
-                return proj;
-            });
-        },
+    findById: function(id){
+        return Project.find({_id: id});
+    },
 
-        create: function(data, callback){
-            // TODO: Validation
-            var create = Project.create({
-                name: data.name
-            });
+    create: function(data, callback){
+        // TODO: Validation
+        var create = Project.create({
+            name: data.name
+        });
 
-            data.team.forEach(function(userid){
-                //create.addTeamMember
-            });
+        data.team.forEach(function(userid){
+            //create.addTeamMember
+        });
 
-            return create.save().then(callback);
-        },
+        return create.save();
+    },
 
-        search: function(term){
+    search: function(term){
 
-        }
-
-
-    };
+    }
 
 };

@@ -31,8 +31,8 @@ connect(dburi).then(function(db) {
     bind.middleware(app);
     bind.services(app);
     bind.routes(app);
-    bind.routes(app);
     bind.listen(app, port);
+
 }).catch(function(e){
     console.log(e);
 });
