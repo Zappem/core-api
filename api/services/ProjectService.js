@@ -7,7 +7,7 @@ module.exports = {
     },
 
     findById: function(id){
-        return Project.find({_id: id});
+        return Project.findOne({_id: id});
     },
 
     create: function(data, callback){
