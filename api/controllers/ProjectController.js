@@ -1,18 +1,26 @@
 module.exports = {
 
     showAll: function(req, res){
-        // req.app.services.Projects.getAll(function(err, projects){
-        //     res.json(projects);
-        // });
+        req.app.services.Projects.all().then(function(all){
+            res.send(all);
+        });
+    },
+
+    findById: function(req, res){
+        req.app.services.Projects.findById(req.params.id).then(function(proj){
+            res.json(proj);
+        });
+    },
+
+    updateById: function(req, res){
+        req.app.services.Projects.updateById(req.params.id, req.body).then(function(proj){
+            res.json(proj);
+        });
     },
 
     createNew: function(req, res){
-        // TODO: Validate it here.
-        // req.app.services.Projects.createNew({
-        //     project_name: req.params.project_name,
-        //     team_members: req.params.team_members
-        // }, function(err, newProject){
-        //     res.json(newProject);
-        // });
+        req.app.services.Projects.create(req.body).then(function(proj){
+            res.json(proj)
+        });
     }
 };

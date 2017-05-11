@@ -1,7 +1,7 @@
 var express     = require('express'),
     bodyParser  = require('body-parser'),
     connect     = require('camo').connect,
-    dburi       = 'nedb:///data/data.json',
+    dburi       = 'nedb://'+__dirname+'/storage',
     routes      = require('./routes.js'),
     services    = require('./services.js'),
     app         = express(),
@@ -33,5 +33,7 @@ connect(dburi).then(function(db) {
     bind.routes(app);
     bind.routes(app);
     bind.listen(app, port);
+}).catch(function(e){
+    console.log(e);
 });
 
