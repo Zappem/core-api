@@ -1,9 +1,5 @@
 var Exception = require('../models/ExceptionModel.js');
 
-var Services = {
-    Instances: require('./InstanceService.js')
-};
-
 module.exports = {
 
     findByMessage: function (message) {
