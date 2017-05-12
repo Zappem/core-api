@@ -1,0 +1,234 @@
+swagger: "2.0"
+info:
+  description: "This is the documentation for the Zappem Core API. All Zappem's functionality is accessible using this."
+  version: "1.0.0"
+  title: "Zappem API"
+  termsOfService: "https://zappem.xyz/terms"
+  contact:
+    email: "support@zappem.xyz"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "api.zappem.xyz"
+basePath: "/v1"
+tags:
+- name: "projects"
+  description: "Access Projects you own or belong to"
+- name: "users"
+  description: "Access Users of this Zappem installation"
+- name: "exceptions"
+  description: "Access Exceptions belonging to projects you have access to"
+- name: "instances"
+  description: "Access Instances of Exceptions"
+- name: "errors"
+  description: "Notify Zappem of a new error in a project"
+schemes:
+- "http"
+paths:
+  /projects:
+    get:
+      tags:
+      - "projects"
+      summary: "Retrieve all projects you have access to"
+      description: "This includes both projects you own and projects where you are a team member"
+      operationId: "allProjects"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "Projects retrieved"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Project"
+      security:
+      - zappem_auth:
+        - "read:projects"
+    post:
+      tags:
+      - "projects"
+      summary: "Create a new project"
+      description: "Creates a new project belonging to the authenticated user"
+      operationId: "createProject"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Project object to be created"
+        required: true
+        schema:
+          type: "object"
+          properties:
+            name:
+              type: "string"
+              description: "Name of the new project"
+            team:
+              type: "array"
+              items:
+                type: "string"
+                description: "ID of user"
+      responses:
+        200:
+          description: "Project created"
+          schema:
+            $ref: "#/definitions/Project"
+        405:
+          description: "Validation exception"
+      security:
+      - zappem_auth:
+        - "write:projects"
+        - "read:projects"
+  /projects/{id}:
+    get:
+      tags:
+      - "projects"
+      summary: "Gets a project by the ID"
+      description: "Retreives a project along with the team"
+      operationId: "findProjectById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of the project to retrieve"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Project retrieved"
+          schema:
+            $ref: "#/definitions/Project"
+        400:
+          description: "Invalid Project ID"
+        404:
+          description: "Project was not found"
+      security:
+      - zappem_auth:
+        - "read:projects"
+    put:
+      tags:
+      - "projects"
+      summary: "Updates a project"
+      description: "Allows you to update a project name"
+      operationId: "updateProject"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of the project to update"
+        required: true
+        type: "string"
+      - name: "data"
+        in: "body"
+        schema:
+          properties:
+            name:
+              type: "string"
+              description: "New name for this project"
+              required: true
+      responses:
+        200:
+          description: "Project updated"
+          schema:
+            $ref: "#/definitions/Project"
+        400:
+          description: "Invalid Project ID"
+        404:
+          description: "Project was not found"
+        405:
+          description: "Validation error"
+      security:
+      - zappem_auth:
+        - "write:projects"
+        - "read:projects"
+    delete:
+      tags:
+      - "projects"
+      summary: "Delete a project"
+      description: "Use with caution - deleting a project will remove all exceptions, instances and comments associated with it."
+      operationId: "deleteProject"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of project to delete"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Project was deleted"
+        400:
+          description: "Invalid project ID"
+        404:
+          description: "Project not found"
+      security:
+      - zappem_auth:
+        - "write:projects"
+        - "read:projects"
+        - "destroy:projects"
+
+securityDefinitions:
+  zappem_auth:
+    type: "oauth2"
+    authorizationUrl: "http://api.zappem.xyz/authorize"
+    flow: "implicit"
+    scopes:
+      write:projects: "Modify projects you own"
+      read:projects: "Read projects you have access to"
+      destroy:projects: "Destroy projects you own"
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
+definitions:
+  Project:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "Project ID"
+      name:
+        type: "string"
+        description: "Name of the project"
+      team:
+        type: "array"
+        items:
+          $ref: '#/definitions/EmbeddedUser'
+        description: "An array of users who have access to this project"
+      date_created:
+        type: "string"
+        format: "date-time"
+        description: "When this project was created"
+      last_occurrence:
+        type: "string"
+        format: "date-time"
+        description: "The last time this project had an instance of an error"
+      last_new_error:
+        type: "string"
+        format: "date-time"
+        description: "The last time this project had a new error"
+  EmbeddedUser:
+    type: "object"
+    properties:
+      user_id:
+        type: "string"
+        description: "The ID of the user"
+      first_name:
+        type: "string"
+        description: "The user's first name"
+      last_name:
+        type: "string"
+        description: "The user's last name"
+      profile_img:
+        type: "string"
+        description: "The filename of the user's profile image"
+externalDocs:
+  description: "Find out more about Zappem"
+  url: "http://zappem.xyz"

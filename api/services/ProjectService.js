@@ -21,6 +21,7 @@ module.exports = {
         });
 
         data.team.forEach(function(userid){
+            // Make an EmbeddedUser object and push it in.
             //create.addTeamMember
         });
 
