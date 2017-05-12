@@ -30,8 +30,13 @@ class Project extends Document {
         };
     };
 
-    addTeamMember() {
-
+    addTeamMember(user) {
+        var member = EmbeddedUser.create();
+        member.user_id = user._id;
+        member.first_name = user.first_name;
+        member.last_name = user.last_name;
+        //member.profile_img = user.profile_img;
+        return this.team.push(member);
     }
 }
 

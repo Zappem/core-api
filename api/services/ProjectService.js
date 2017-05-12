@@ -20,12 +20,18 @@ module.exports = {
             name: data.name
         });
 
+        var getTeam = [];
         data.team.forEach(function(userid){
             // Make an EmbeddedUser object and push it in.
-            //create.addTeamMember
+            getTeam.push(Services.Users.findById(userid));
         });
 
-        return create.save();
+        return Promise.all(getTeam).then(function(users){
+            users.forEach(function(user) {
+                create.addTeamMember(user);
+            });
+            return create.save();
+        })
     },
 
     updateById: function(id, data){
