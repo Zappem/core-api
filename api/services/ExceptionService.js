@@ -9,6 +9,10 @@ module.exports = {
         return this.findOne({message:message});
     },
 
+    findByAssignedUser: function(id) {
+        return Exception.find({"assigned_to.user_id":id});
+    },
+
     findOne: function(query) {
         return Exception.findOne(query);
     },

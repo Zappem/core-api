@@ -2,7 +2,7 @@ module.exports = {
 
     showAll: function(req, res){
         req.app.services.Projects.all().then(function(all){
-            res.send(all);
+            res.json(all);
         });
     },
 

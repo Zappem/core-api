@@ -11,8 +11,7 @@ module.exports = {
      * @param data
      */
     add: function(data){
-        var obj = this,
-            create;
+        var obj = this;
         // Have we seen this error before?
         return this.alreadyExists(data).then(function(exception){
 
