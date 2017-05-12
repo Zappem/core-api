@@ -24,10 +24,7 @@ module.exports = {
 
     addAssignedException: function(user_id, exception_id){
         return User.findOne({_id: user_id}).then(function(user){
-            // TODO: This is a right pain - it's expecting an instance of EmbeddedException.
-            user.assigned_exceptions.push({
-                exception_id: exception_id
-            });
+            user.addAssignedException(exception_id);
             return user.save();
         });
     },
@@ -35,11 +32,7 @@ module.exports = {
     removeAssignedException: function(user_id, exception_id){
         return User.findOne({_id: user_id}).then(function(user){
              var count = 0;
-             user.assigned_exceptions.forEach(function(exception){
-                if(exception.exception_id === exception_id) return;
-                count++;
-             });
-             user.splice(count);
+             user.removeAssignedException(exception_id);
              return user.save();
         });
     },

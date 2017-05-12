@@ -21,7 +21,7 @@ module.exports = {
 	},
 
 	unassignUser: function(req, res){
-		ExceptionService.unassignUser(req.params.id).then(function(exception){
+		ExceptionService.unassignUser(req.params.id, req.body.user_id).then(function(exception){
 			res.json(exception);
 		});
 	}

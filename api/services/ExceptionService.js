@@ -50,6 +50,7 @@ module.exports = {
     },
 
     assignUser: function(exception_id, user_id){
+        // TODO: Check if this is an actual user
         var obj = this;
         return Promise.all([
             Services.Users.findById(user_id),
@@ -58,17 +59,18 @@ module.exports = {
             data[1].addAssignee(data[0]);
             return Promise.all([
                 data[1].save(),
-                //Services.Users.addAssignedException(user_id, exception_id)
+                Services.Users.addAssignedException(user_id, exception_id)
             ]);
         });
     },
 
-    unassignUser: function(exception_id){
+    unassignUser: function(exception_id, user_id){
+        // TODO: Check if this is an actual user
         return this.findById(exception_id).then(function(exception){
             exception.removeAssignee();
             return Promise.all([
-                exception.save()
-                //Services.Users.removeAssignedException(user_id, exception_id)
+                exception.save(),
+                Services.Users.removeAssignedException(user_id, exception_id)
             ]);
         });
     }
