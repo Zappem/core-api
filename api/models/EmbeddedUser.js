@@ -19,13 +19,6 @@ class EmbeddedUser extends EmbeddedDocument {
             required: true
         };
 
-        this.email = {
-            type: String,
-            required: true,
-            unique: true
-            // TODO: regex validation here.
-        };
-
         this.profile_img = {
             type: String,
             default: null
