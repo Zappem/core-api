@@ -9,8 +9,8 @@ info:
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "api.zappem.xyz"
-basePath: "/v1"
+host: "localhost:3002"
+#basePath: "/v1"
 consumes:
 - "application/json"
 produces:
@@ -18,11 +18,11 @@ produces:
 tags:
 - name: "Projects"
   description: "Access Projects you own or belong to"
-- name: "users"
+- name: "Users"
   description: "Access Users of this Zappem installation"
-- name: "exceptions"
+- name: "Exceptions"
   description: "Access Exceptions belonging to projects you have access to"
-- name: "instances"
+- name: "Instances"
   description: "Access Instances of Exceptions"
 - name: "Errors"
   description: "Notify Zappem of a new error in a project"
@@ -56,7 +56,7 @@ paths:
         - "read:projects"
     post:
       tags:
-      - "projects"
+      - "Projects"
       summary: "Create a new project"
       description: "Creates a new project belonging to the authenticated user"
       operationId: "createProject"
@@ -94,7 +94,7 @@ paths:
   /projects/{id}:
     get:
       tags:
-      - "projects"
+      - "Projects"
       summary: "Gets a project by the ID"
       description: "Retreives a project along with the team"
       operationId: "findProjectById"
@@ -118,7 +118,7 @@ paths:
         - "read:projects"
     put:
       tags:
-      - "projects"
+      - "Projects"
       summary: "Updates a project"
       description: "Allows you to update a project name"
       operationId: "updateProject"
@@ -153,7 +153,7 @@ paths:
         - "read:projects"
     delete:
       tags:
-      - "projects"
+      - "Projects"
       summary: "Delete a project"
       description: "Use with caution - deleting a project will remove all exceptions, instances and comments associated with it."
       operationId: "deleteProject"
@@ -180,40 +180,52 @@ paths:
   /exceptions:
     get:
       tags:
-      - "exceptions"
+      - "Exceptions"
       summary: "Get all exceptions for projects you have access to"
   /exception/{id}:
     get:
       tags:
-      - "exceptions"
+      - "Exceptions"
       summary: "Get an exception by the ID"
   /exceptions/{id}/assign:
     put:
       tags:
-      - "exceptions"
+      - "Exceptions"
       summary: "Assign an exception to a user"
     delete:
       tags:
-      - "exceptions"
+      - "Exceptions"
       summary: "Unassign a user from an exception"
+      
+  /instances:
+    get:
+      tags:
+      - "Instances"
+      summary: "Get all instances of exceptions belonging to projects you have access to"
+  /instances/{id}:
+    get:
+      tags:
+      - "Instances"
+      summary: "Get a specific instance"
+      
       
   /users:
     get:
       tags:
-      - "users"
+      - "Users"
       summary: "Gets all users"
     post:
       tags:
-      - "users"
+      - "Users"
       summary: "Creates a new user"
   /users/{id}:
     get:
       tags:
-      - "users"
+      - "Users"
       summary: "Retrieves a user"
     put:
       tags:
-      - "users"
+      - "Users"
       summary: "Updates a user"
       
       
