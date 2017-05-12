@@ -11,8 +11,12 @@ info:
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 host: "api.zappem.xyz"
 basePath: "/v1"
+consumes:
+- "application/json"
+produces:
+- "application/json"
 tags:
-- name: "projects"
+- name: "Projects"
   description: "Access Projects you own or belong to"
 - name: "users"
   description: "Access Users of this Zappem installation"
@@ -20,22 +24,26 @@ tags:
   description: "Access Exceptions belonging to projects you have access to"
 - name: "instances"
   description: "Access Instances of Exceptions"
-- name: "errors"
+- name: "Errors"
   description: "Notify Zappem of a new error in a project"
 schemes:
 - "http"
 paths:
+
+  /error:
+    post:
+      tags:
+      - "Errors"
+      summary: "Send an error to Zappem"
+      description: "This will decide whether or not the exception has been seen before - and will create both an instance and an exception if it's new, or just an instance if it's been seen before."
+      
   /projects:
     get:
       tags:
-      - "projects"
+      - "Projects"
       summary: "Retrieve all projects you have access to"
       description: "This includes both projects you own and projects where you are a team member"
       operationId: "allProjects"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
       responses:
         200:
           description: "Projects retrieved"
@@ -90,8 +98,6 @@ paths:
       summary: "Gets a project by the ID"
       description: "Retreives a project along with the team"
       operationId: "findProjectById"
-      produces:
-      - "application/json"
       parameters:
       - name: "id"
         in: "path"
@@ -116,8 +122,6 @@ paths:
       summary: "Updates a project"
       description: "Allows you to update a project name"
       operationId: "updateProject"
-      produces:
-      - "application/json"
       parameters:
       - name: "id"
         in: "path"
@@ -153,8 +157,6 @@ paths:
       summary: "Delete a project"
       description: "Use with caution - deleting a project will remove all exceptions, instances and comments associated with it."
       operationId: "deleteProject"
-      produces:
-      - "application/json"
       parameters:
       - name: "id"
         in: "path"
@@ -173,6 +175,48 @@ paths:
         - "write:projects"
         - "read:projects"
         - "destroy:projects"
+        
+        
+  /exceptions:
+    get:
+      tags:
+      - "exceptions"
+      summary: "Get all exceptions for projects you have access to"
+  /exception/{id}:
+    get:
+      tags:
+      - "exceptions"
+      summary: "Get an exception by the ID"
+  /exceptions/{id}/assign:
+    put:
+      tags:
+      - "exceptions"
+      summary: "Assign an exception to a user"
+    delete:
+      tags:
+      - "exceptions"
+      summary: "Unassign a user from an exception"
+      
+  /users:
+    get:
+      tags:
+      - "users"
+      summary: "Gets all users"
+    post:
+      tags:
+      - "users"
+      summary: "Creates a new user"
+  /users/{id}:
+    get:
+      tags:
+      - "users"
+      summary: "Retrieves a user"
+    put:
+      tags:
+      - "users"
+      summary: "Updates a user"
+      
+      
 
 securityDefinitions:
   zappem_auth:
