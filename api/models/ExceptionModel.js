@@ -1,5 +1,7 @@
 var Document = require('camo').Document;
-var EmbeddedDocument = require('camo').EmbeddedDocument;
+var EmbeddedProject = require('./EmbeddedProject.js');
+var EmbeddedStack = require('./EmbeddedStack.js');
+var EmbeddedUser = require('./EmbeddedUser.js');
 
 class Exception extends Document {
     constructor() {
@@ -20,10 +22,12 @@ class Exception extends Document {
             default: 1
         };
 
-        this.stack = [Stack];
+        this.stack = [EmbeddedStack];
+
+        this.assigned_to = EmbeddedUser;
 
         this.project = {
-            type: Project,
+            type: EmbeddedProject,
             required: true
         };
 
@@ -50,32 +54,4 @@ class Exception extends Document {
     }
 }
 
-class Stack extends EmbeddedDocument {
-    constructor() {
-        super();
-
-        this.file = {
-            type: String,
-            required: true
-        };
-
-        this.line = {
-            type: Number,
-            default: 0
-        };
-
-        this.class = {
-            type: String,
-            default: "<Unknown>"
-        };
-    }
-}
-
-class Project extends EmbeddedDocument {
-    constructor() {
-        super();
-        this.project_id = String;
-        this.name = String;
-    }
-}
 module.exports = Exception;

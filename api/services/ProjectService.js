@@ -1,6 +1,7 @@
 var Project = require('../models/ProjectModel.js');
 var Services = {
-    Exceptions: require('./ExceptionService.js')
+    Exceptions: require('./ExceptionService.js'),
+    Users: require('./UserService.js')
 };
 
 module.exports = {
@@ -13,7 +14,7 @@ module.exports = {
         return Project.findOne({_id: id});
     },
 
-    create: function(data, callback){
+    create: function(data){
         // TODO: Validation
         var create = Project.create({
             name: data.name
@@ -27,18 +28,31 @@ module.exports = {
     },
 
     updateById: function(id, data){
-        var inners = [];
         return Promise.all([
             Project.findOneAndUpdate({_id: id}, data),
             // We also need to update all exceptions within this project.
             Services.Exceptions.findByProjectId(id).then(function(exceptions){
+                var excepPromise = [];
                 exceptions.forEach(function(exception) {
                     exception.project.name = data.name;
-                    inners.push(exception.save());
+                    excepPromise.push(exception.save());
                 });
-                return Promise.all(inners);
+                return Promise.all(excepPromise);
+            }),
+            // We also need to update all users that belong to this project.
+            Services.Users.findByProjectId(id).then(function(users){
+                var usrPromise = [];
+                users.forEach(function(user){
+                    user.project.name = data.name;
+                    usrPromise.push(user.save());
+                });
+                return Promise.all(usrPromise);
             })
         ]);
+    },
+
+    findByAssignedUser: function(id){
+        return Project.find({"team.user_id":id});
     },
 
     search: function(term){

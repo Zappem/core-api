@@ -1,5 +1,6 @@
 var Document = require('camo').Document;
 var EmbeddedDocument = require('camo').EmbeddedDocument;
+var EmbeddedUser = require('./EmbeddedUser.js');
 
 class Project extends Document {
     constructor() {
@@ -11,7 +12,7 @@ class Project extends Document {
             required: true
         };
 
-        this.team = [Team];
+        this.team = [EmbeddedUser];
 
         this.dateCreated = {
             type: Date,
@@ -31,38 +32,6 @@ class Project extends Document {
 
     addTeamMember() {
 
-    }
-}
-
-class Team extends EmbeddedDocument {
-    constructor() {
-        super();
-
-        this.first_name = {
-            type: String,
-            required: true
-        };
-
-        this.last_name = {
-            type: String,
-            required: true
-        };
-
-        this.email = {
-            type: String,
-            required: true,
-            unique: true,
-            // TODO: regex validation here.
-        };
-
-        this.team_since = {
-            type: Date,
-            default: Date.now
-        };
-
-        this.member_since = {
-            type: Date
-        };
     }
 }
 
