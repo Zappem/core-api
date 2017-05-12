@@ -4,6 +4,7 @@ module.exports = function(app){
     var projectController = require('./controllers/ProjectController.js');
     var errorController = require('./controllers/ErrorController.js');
     var userController = require('./controllers/UserController.js');
+    var instanceController = require('./controllers/InstanceController.js');
 
     app.route('/projects')
         .post(projectController.createNew)
@@ -22,6 +23,12 @@ module.exports = function(app){
     app.route('/exceptions/:id/assign')
         .put(exceptionController.assignUser)
         .delete(exceptionController.unassignUser);
+
+    app.route('/instances')
+        .get(instanceController.showAll);
+
+    app.route('/instances/:id')
+        .get(instanceController.findById);
 
     app.route('/error')
         .post(errorController.createNew);
