@@ -16,6 +16,13 @@ module.exports = function(app){
     app.route('/exceptions')
 	    .get(exceptionController.showAll);
 
+    app.route('/exceptions/:id')
+        .get(exceptionController.findById);
+
+    app.route('/exceptions/:id/assign')
+        .put(exceptionController.assignUser)
+        .delete(exceptionController.unassignUser);
+
     app.route('/error')
         .post(errorController.createNew);
 
@@ -27,6 +34,4 @@ module.exports = function(app){
         .get(userController.findById)
         .put(userController.updateById);
 
-
-	
 };
