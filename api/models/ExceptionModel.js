@@ -24,7 +24,11 @@ class Exception extends Document {
 
         this.stack = [EmbeddedStack];
 
-        this.assigned_to = EmbeddedUser;
+        this.assigned_to = {
+            type: EmbeddedUser,
+            required: false,
+            default: null
+        };
 
         this.project = {
             type: EmbeddedProject,
@@ -52,6 +56,17 @@ class Exception extends Document {
         };
 
     }
+
+    addAssignee(user) {
+        this.assigned_to = EmbeddedUser.createFromRealUser(user);
+        return this;
+    }
+
+    removeAssignee() {
+        this.assigned_to = null;
+        return this;
+    }
+
 }
 
 module.exports = Exception;

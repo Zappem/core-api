@@ -173,6 +173,9 @@ paths:
         - "write:projects"
         - "read:projects"
         - "destroy:projects"
+  /projects/{id}/assign:
+    put:
+
 
 securityDefinitions:
   zappem_auth:

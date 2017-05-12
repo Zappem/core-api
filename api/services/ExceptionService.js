@@ -19,7 +19,7 @@ module.exports = {
     },
 
     findById: function(id){
-        return this.findOne({_id: id});
+        return Exception.findOne({_id: id});
     },
 
     findOne: function(query) {
@@ -55,23 +55,20 @@ module.exports = {
             Services.Users.findById(user_id),
             obj.findById(exception_id)
         ]).then(function(data){
-            data[1].assigned_to.user_id = user_id;
-            data[1].assigned_to.first_name = data[0].first_name;
-            data[1].assigned_to.last_name = data[0].last_name;
-            data[1].assigned_to.profile_img = data[0].profile_img;
+            data[1].addAssignee(data[0]);
             return Promise.all([
                 data[1].save(),
-                Services.Users.addAssignedException(user_id, exception_id)
+                //Services.Users.addAssignedException(user_id, exception_id)
             ]);
         });
     },
 
-    unassignUser: function(exception_id, user_id){
-        this.findById(exception_id).then(function(exception){
-            exception.assigned_to = {};
+    unassignUser: function(exception_id){
+        return this.findById(exception_id).then(function(exception){
+            exception.removeAssignee();
             return Promise.all([
-                exception.save(),
-                Services.Users.removeAssignedException(user_id, exception_id)
+                exception.save()
+                //Services.Users.removeAssignedException(user_id, exception_id)
             ]);
         });
     }

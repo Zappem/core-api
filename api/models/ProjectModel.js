@@ -1,5 +1,4 @@
 var Document = require('camo').Document;
-var EmbeddedDocument = require('camo').EmbeddedDocument;
 var EmbeddedUser = require('./EmbeddedUser.js');
 
 class Project extends Document {
@@ -31,12 +30,9 @@ class Project extends Document {
     };
 
     addTeamMember(user) {
-        var member = EmbeddedUser.create();
-        member.user_id = user._id;
-        member.first_name = user.first_name;
-        member.last_name = user.last_name;
-        //member.profile_img = user.profile_img;
-        return this.team.push(member);
+        return this.team.push(
+            EmbeddedUser.createFromRealUser(user)
+        );
     }
 }
 

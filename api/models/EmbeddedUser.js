@@ -23,7 +23,21 @@ class EmbeddedUser extends EmbeddedDocument {
             type: String,
             default: null
         };
+    };
+
+    /**
+     * Creates a new instance of the EmbeddedUser using data from a user model.
+     * @param user
+     */
+    static createFromRealUser(realUser) {
+        var user = this.create();
+        user.user_id = realUser._id;
+        user.first_name = realUser.first_name;
+        user.last_name = realUser.last_name;
+        //user.profile_img = realUser.profile_img
+        return user;
     }
-}
+
+};
 
 module.exports = EmbeddedUser;
