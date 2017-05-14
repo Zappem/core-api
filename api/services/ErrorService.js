@@ -3,6 +3,8 @@ var Services = {
     Instances: require('./InstanceService.js')
 };
 
+var Validation = require('../validation/NewError.js');
+
 module.exports = {
 
     /**
@@ -11,7 +13,28 @@ module.exports = {
      * @param data
      */
     add: function(data){
+        var obj = this,
+            errors = [];
+
+        console.log(data);
+        return new Promise(function(reject, resolve){
+            errors = Validation.validate(data);
+            if(errors.length){
+                reject({
+                    success: false,
+                    error: "Validation Error",
+                    errors: errors
+                });
+            }else{
+                return resolve(obj.create(data));
+            }
+        });
+
+    },
+
+    create: function(data) {
         var obj = this;
+        console.log(obj);
         // Have we seen this error before?
         return this.alreadyExists(data).then(function(exception){
 
@@ -25,7 +48,6 @@ module.exports = {
         }).then(function(error){
             return error;
         });
-
     },
 
     alreadyExists: function(data){

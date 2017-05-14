@@ -1,7 +1,11 @@
+var ErrorService = require('../services/ErrorService.js');
+
 module.exports = {
 
     createNew: function(req, res){
-        req.app.services.Errors.add(req.body).then(function(error){
+        ErrorService.add(req.body).then(function(error){
+            res.json(error);
+        }).catch(function(error){
             res.json(error);
         });
     }

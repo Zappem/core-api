@@ -12,11 +12,6 @@ class Exception extends Document {
             required: true
         };
 
-        this.fullMessage = {
-            type: String,
-            required: true
-        };
-
         this.times = {
             type: Number,
             default: 1

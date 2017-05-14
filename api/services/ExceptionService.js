@@ -32,6 +32,7 @@ module.exports = {
 
     create: function (data) {
         // Get the project first.
+        console.log(Services);
         return Services.Projects.findById(data.projectID).then(function(proj){
             data.project = {
                 project_id: proj._id,
