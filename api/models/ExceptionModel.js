@@ -12,11 +12,6 @@ class Exception extends Document {
             required: true
         };
 
-        this.fullMessage = {
-            type: String,
-            required: true
-        };
-
         this.times = {
             type: Number,
             default: 1
@@ -41,12 +36,12 @@ class Exception extends Document {
             required: true
         };
 
-        this.firstSeen = {
+        this.first_seen = {
             type: Date,
             default: Date.now
         };
 
-        this.lastSeen = {
+        this.last_seen = {
             type: Date,
             default: Date.now
         };

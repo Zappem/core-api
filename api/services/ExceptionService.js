@@ -1,10 +1,15 @@
 var Exception = require('../models/ExceptionModel.js');
-var Services = {
-    Projects: require('./ProjectService.js'),
-    Users: require('./UserService.js')
-};
+// var Services = {
+//     Projects: require('./ProjectService.js'),
+//     Users: require('./UserService.js')
+// };
 
 module.exports = {
+
+    Services: {
+        Projects: require('./ProjectService.js'),
+        Users: require('./UserService.js')
+    },
 
     all: function(){
         return Exception.find({});
@@ -32,7 +37,7 @@ module.exports = {
 
     create: function (data) {
         // Get the project first.
-        return Services.Projects.findById(data.projectID).then(function(proj){
+        return this.Services.Projects.findById(data.project_id).then(function(proj){
             data.project = {
                 project_id: proj._id,
                 name: proj.name

@@ -1,17 +1,17 @@
 var express     = require('express'),
     bodyParser  = require('body-parser'),
     connect     = require('camo').connect,
-    dburi       = 'nedb://'+__dirname+'/storage',
+    dburi       = process.env.DB || 'nedb://'+__dirname+'/storage',
     routes      = require('./routes.js'),
-    services    = require('./services.js'),
+    //services    = require('./services.js'),
     app         = express(),
-    port        = process.env.PORT || 3002;
+    port        = process.env.PORT || 3005;
 
 
 var bind = {
-    services: function(app){
-        app.services = services.init(app);
-    },
+    // services: function(app){
+    //     app.services = services.init(app);
+    // },
     routes: function(app){
         routes(app);
     },
@@ -29,7 +29,7 @@ connect(dburi).then(function(db) {
     app.db = db;
 
     bind.middleware(app);
-    bind.services(app);
+    //bind.services(app);
     bind.routes(app);
     bind.listen(app, port);
 
@@ -37,3 +37,4 @@ connect(dburi).then(function(db) {
     console.log(e);
 });
 
+module.exports = app;

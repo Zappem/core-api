@@ -1,7 +1,10 @@
-var Services = {
-    Exceptions: require('./ExceptionService.js'),
-    Instances: require('./InstanceService.js')
-};
+// var Services = {
+//     Exceptions: require('./ExceptionService.js'),
+//     Instances: require('./InstanceService.js')
+// };
+
+const   ExceptionService = require('./ExceptionService.js'),
+        InstanceService = require('./InstanceService.js');
 
 module.exports = {
 
@@ -29,7 +32,7 @@ module.exports = {
     },
 
     alreadyExists: function(data){
-        return Services.Exceptions.findOne({
+        return ExceptionService.findOne({
             message: data.message,
             language: data.language,
             environment: data.environment
@@ -38,15 +41,16 @@ module.exports = {
 
     addNewInstance: function(data){
         return Promise.all([
-            Services.Instances.create(data),
-            Services.Exceptions.incrementTimes(data.error_id)
+            InstanceService.create(data),
+            ExceptionService.incrementTimes(data.error_id)
         ]);
     },
 
     addNewException: function(data){
-        return Services.Exceptions.create(data).then(function(exc){
+        var obj = this;
+        return ExceptionService.create(data).then(function(exc){
             data.error_id = exc._id;
-            return Services.Instances.create(data);
+            return InstanceService.create(data);
         });
     }
 };
