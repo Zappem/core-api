@@ -1,7 +1,5 @@
-var Services = {
-    Exceptions: require('./ExceptionService.js'),
-    Instances: require('./InstanceService.js')
-};
+const   ExceptionService = require('./ExceptionService.js'),
+        InstanceService = require('./InstanceService.js');
 
 var Validation = require('../validation/NewError.js');
 
@@ -16,7 +14,6 @@ module.exports = {
         var obj = this,
             errors = [];
 
-        console.log(data);
         return new Promise(function(reject, resolve){
             errors = Validation.validate(data);
             if(errors.length){
@@ -34,7 +31,6 @@ module.exports = {
 
     create: function(data) {
         var obj = this;
-        console.log(obj);
         // Have we seen this error before?
         return this.alreadyExists(data).then(function(exception){
 
@@ -51,7 +47,7 @@ module.exports = {
     },
 
     alreadyExists: function(data){
-        return Services.Exceptions.findOne({
+        return ExceptionService.findOne({
             message: data.message,
             language: data.language,
             environment: data.environment
@@ -60,15 +56,15 @@ module.exports = {
 
     addNewInstance: function(data){
         return Promise.all([
-            Services.Instances.create(data),
-            Services.Exceptions.incrementTimes(data.error_id)
+            InstanceService.create(data),
+            ExceptionService.incrementTimes(data.error_id)
         ]);
     },
 
     addNewException: function(data){
-        return Services.Exceptions.create(data).then(function(exc){
+        return ExceptionService.create(data).then(function(exc){
             data.error_id = exc._id;
-            return Services.Instances.create(data);
+            return InstanceService.create(data);
         });
     }
 };

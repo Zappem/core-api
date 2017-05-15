@@ -40,12 +40,12 @@ class Exception extends Document {
             required: true
         };
 
-        this.firstSeen = {
+        this.first_seen = {
             type: Date,
             default: Date.now
         };
 
-        this.lastSeen = {
+        this.last_seen = {
             type: Date,
             default: Date.now
         };

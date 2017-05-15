@@ -1,15 +1,14 @@
 var Document = require('camo').Document;
-//var EmbeddedDocument = require('camo').EmbeddedDocument;
 
 class Instance extends Document {
     constructor() {
         super();
 
         this.error_id = String;
-        this.requestUrl = String;
-        this.requestMethod = String;
-        this.requestHeaders = Object;
-        this.requestIP = String;
+        this.request_url = String;
+        this.request_method = String;
+        this.request_headers = Object;
+        this.request_ip = String;
 
         this.occurred = {
             type: Date,

@@ -1,4 +1,4 @@
-var ErrorService = require('../services/ErrorService.js');
+const ErrorService = require('../services/ErrorService.js');
 
 module.exports = {
 
