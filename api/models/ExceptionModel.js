@@ -19,7 +19,10 @@ class Exception extends Document {
 
         this.stack = [EmbeddedStack];
 
-        this.assigned_to = EmbeddedUser;
+        this.assigned_to = {
+            type: EmbeddedUser,
+            required: false
+        };
 
         this.project = {
             type: EmbeddedProject,
@@ -46,6 +49,12 @@ class Exception extends Document {
             default: Date.now
         };
 
+    }
+
+    preSave() {
+        // if (this.assigned_to === undefined) {
+        //     this.assigned_to = {};
+        // }
     }
 }
 

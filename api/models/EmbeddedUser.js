@@ -6,17 +6,17 @@ class EmbeddedUser extends EmbeddedDocument {
 
         this.user_id = {
             type: String,
-            required: true
+            //required: true
         };
 
         this.first_name = {
             type: String,
-            required: true
+            //required: true
         };
 
         this.last_name = {
             type: String,
-            required: true
+            //required: true
         };
 
         this.profile_img = {
