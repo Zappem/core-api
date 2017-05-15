@@ -5,7 +5,10 @@ var chai = require('chai'),
     chaiHttp = require('chai-http');
 
 chai.use(chaiHttp);
-//chai.server = require('../api/index.js');
-chai.server = "http://localhost:3005";
+chai.server = require('../api/index.js');
+
+beforeEach(function(){
+    return chai.server.relaunchDB();
+});
 
 module.exports = chai;

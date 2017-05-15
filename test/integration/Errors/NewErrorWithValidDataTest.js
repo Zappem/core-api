@@ -61,7 +61,6 @@ describe('/error endpoint', function() {
                     .post(endpoint)
                     .send(generateNewError(project))
                     .end(function (err, res) {
-                        console.log(err);
                         res.should.have.status(200);
                         done();
                     });

@@ -24,17 +24,28 @@ var bind = {
     }
 };
 
-/* Connect to the db */
-connect(dburi).then(function(db) {
-    app.db = db;
+app.launch = function() {
+    /* Connect to the db */
+    return new Promise(function(res, rej){
+        connect(dburi).then(function (db) {
+            app.db = db;
+            bind.middleware(app);
+            bind.routes(app);
+            bind.listen(app, port);
+            res();
+        }).catch(function (e) {
+            console.log(e);
+            rej();
+        });
+    });
+};
 
-    bind.middleware(app);
-    //bind.services(app);
-    bind.routes(app);
-    bind.listen(app, port);
+app.launch();
 
-}).catch(function(e){
-    console.log(e);
-});
+app.relaunchDB = function(callback){
+    connect(dburi).then(function(db){
+        app.db = db;
+    })
+};
 
 module.exports = app;
