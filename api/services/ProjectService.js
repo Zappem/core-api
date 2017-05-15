@@ -15,6 +15,12 @@ module.exports = {
         return Project.findOne({_id: id});
     },
 
+    doesProjectExist: function(id){
+        return Project.count({_id: id}).then(function(count){
+            return count !== 0 ? true : false;
+        });
+    },
+
     create: function(data){
         // TODO: Validation
         var create = Project.create({

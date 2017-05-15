@@ -6,7 +6,7 @@ module.exports = {
         ErrorService.add(req.body).then(function(error){
             res.json(error);
         }).catch(function(error){
-            res.json(error);
+            res.status(400).json(error);
         });
     }
 

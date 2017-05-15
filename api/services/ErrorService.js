@@ -14,17 +14,23 @@ module.exports = {
         var obj = this,
             errors = [];
 
-        return new Promise(function(reject, resolve){
-            errors = Validation.validate(data);
-            if(errors.length){
-                reject({
+        return new Promise(function(resolve, reject){
+            Validation(data).then(function(data){
+
+                var create = obj.create(data);
+                create.then(function(data){
+                    return resolve(data);
+                }).catch(function(data){
+                    return reject(data);
+                });
+
+            }).catch(function(errors){
+                return reject({
                     success: false,
                     error: "Validation Error",
                     errors: errors
                 });
-            }else{
-                return resolve(obj.create(data));
-            }
+            });
         });
 
     },
@@ -33,7 +39,6 @@ module.exports = {
         var obj = this;
         // Have we seen this error before?
         return this.alreadyExists(data).then(function(exception){
-
             if(exception){
                 data.error_id = exception._id;
                 return obj.addNewInstance(data);
@@ -48,6 +53,7 @@ module.exports = {
 
     alreadyExists: function(data){
         return ExceptionService.findOne({
+            "project.project_id": data.project_id,
             message: data.message,
             language: data.language,
             environment: data.environment

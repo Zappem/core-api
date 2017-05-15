@@ -13,17 +13,17 @@ class Project extends Document {
 
         this.team = [EmbeddedUser];
 
-        this.dateCreated = {
+        this.date_created = {
             type: Date,
             default: Date.now
         };
 
-        this.lastOccurrence = {
+        this.last_occurrence = {
             type: Date,
             default: null
         };
 
-        this.lastNewError = {
+        this.last_new_error = {
             type: Date,
             default: null
         };

@@ -1,7 +1,7 @@
 var express     = require('express'),
     bodyParser  = require('body-parser'),
     connect     = require('camo').connect,
-    dburi       = process.env.DB || 'nedb://'+__dirname+'/storage',
+    dburi       = process.env.NODE_DB || 'nedb://'+__dirname+'/storage',
     routes      = require('./routes.js'),
     //services    = require('./services.js'),
     app         = express(),

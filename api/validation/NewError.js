@@ -1,38 +1,64 @@
-var validate = require('validate');
+var validate = require('validate.js');
+var ProjectService = require('../services/ProjectService.js');
 
-module.exports = validate({
+validate.validators.doesProjectExist = function(value){
+    return new validate.Promise(function(resolve, reject){
+        if(value == "" || value === undefined) return reject('Project ID is required');
+
+        ProjectService.doesProjectExist(value).then(function(exists){
+            if(exists){
+                resolve();
+            }else{
+                reject("Project ID does not exist");
+            }
+        });
+    });
+}
+
+var constraints = {
 
     message: {
-        type: 'string',
-        required: true,
-        message: 'Message is required'
-    },
-
-    project_id: {
-        type: 'string',
-        required: true,
-        message: 'Project ID is required',
-        use: function() {
-            // TODO: Check if it's a valid project and if the user has access to it.
-            return true;
+        presence: {
+            message: "Message is required"
         }
     },
 
+    project_id: {
+        doesProjectExist: true
+    },
+
     language: {
-        type: 'string',
-        required: false
+        presence: {
+            message: "Language is required"
+        }
     },
 
     environment: {
-        type: 'string',
-        required: false
-        // TODO: Check if it's in the array
+        presence: {
+            message: "Environment is required"
+        }
     },
 
-    stack: {
-        // TODO: Ensure the array contains valid objects.
-        required: false,
-        type: 'array'
-    }
+    //
+    // language: {
+    //     type: 'string',
+    //     required: false
+    // },
+    //
+    // environment: {
+    //     type: 'string',
+    //     required: false
+    //     // TODO: Check if it's in the array
+    // },
+    //
+    // stack: {
+    //     // TODO: Ensure the array contains valid objects.
+    //     required: false,
+    //     type: 'array'
+    // }
 
-});
+};
+
+module.exports = function(data){
+    return validate.async(data, constraints);
+};

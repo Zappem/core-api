@@ -42,7 +42,6 @@ module.exports = {
                 project_id: proj._id,
                 name: proj.name
             };
-
             return Exception.create(data).save();
         });
     },
