@@ -10,6 +10,13 @@ module.exports = {
 
     findById: function(req, res){
         ProjectService.findById(req.params.id).then(function(proj){
+
+            // TODO: Clean up the error handling here.
+            if(proj === null)
+                return res.status(404).json({
+                    error: "No project found"
+                });
+
             res.json(proj);
         });
     },
