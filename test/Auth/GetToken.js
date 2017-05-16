@@ -1,14 +1,17 @@
 var chai = require('../TestCase.js');
 var User = require('../../api/models/UserModel.js');
 
-var makeValidAuthoriseRequest = function(callback){
-    User.create({
+var createUser = function(){
+    return User.create({
         first_name: "Dan",
         last_name: "Johnson",
         email: "test@example.com",
         password: "password"
-    }).save().then(function() {
+    }).save();
+};
 
+var makeValidAuthoriseRequest = function(callback){
+    createUser().then(function() {
         chai.request(chai.server)
             .post('/authorize')
             .send('grant_type=password')
@@ -56,6 +59,6 @@ describe('Getting an access token with valid data using password grant', functio
 
 });
 
-describe('Getting an access token with invalid data using password grant', function(){
+describe('Getting an access token with invalid client using password grant', function(){
 
 });

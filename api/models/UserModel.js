@@ -56,7 +56,8 @@ class User extends Document {
 
         if(found) this.assigned_exceptions.splice(count);
         return this;
-    }
+    };
+
 }
 
 class EmbeddedException extends EmbeddedDocument {

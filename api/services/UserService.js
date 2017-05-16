@@ -22,6 +22,14 @@ module.exports = {
         return User.find({"project.project_id": id});
     },
 
+    accessibleProjects: function(user){
+        var ids = [];
+        user.projects.forEach(function(project){
+            ids.push(project.project_id);
+        });
+        return ids;
+    },
+
     addAssignedException: function(user_id, exception_id){
         return User.findOne({_id: user_id}).then(function(user){
             user.addAssignedException(exception_id);

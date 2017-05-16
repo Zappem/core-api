@@ -1,4 +1,5 @@
 var Project = require('../models/ProjectModel.js');
+var UserService = require('./UserService.js');
 
 module.exports = {
 
@@ -7,8 +8,16 @@ module.exports = {
         Users: require('./UserService.js')
     },
 
-    all: function(){
+    all: function(user){
         return Project.find({});
+    },
+
+    allAccessibleByUser: function(user){
+        // Get an array of project ID's they have access to,
+        var projects = UserService.accessibleProjects(user);
+        return Project.find({
+            _id: {$in: projects}
+        });
     },
 
     findById: function(id){
@@ -27,18 +36,33 @@ module.exports = {
             name: data.name
         });
 
-        var getTeam = [];
-        data.team.forEach(function(userid){
-            // Make an EmbeddedUser object and push it in.
-            getTeam.push(Services.Users.findById(userid));
-        });
+        return create.save();
+    },
 
-        return Promise.all(getTeam).then(function(users){
-            users.forEach(function(user) {
-                create.addTeamMember(user);
+    addTeamMembers: function(project_id, data){
+        // TODO: Validation
+        return this.findById(project_id).then(function(project) {
+            var getTeam = [];
+            data.team.forEach(function (userid) {
+                // Make an EmbeddedUser object and push it in.
+                getTeam.push(UserService.findById(userid));
             });
-            return create.save();
-        })
+
+            return Promise.all(getTeam).then(function (users) {
+                users.forEach(function (user) {
+                    project.addTeamMember(user);
+                });
+                return project.save();
+            })
+        });
+    },
+
+    revokeTeamMembers: function(project_id, data){
+        return this.findById(project_id).then(function(project) {
+            data.team.forEach(function (user) {
+                project.removeTeamMember(user);
+            })
+        });
     },
 
     updateById: function(id, data){

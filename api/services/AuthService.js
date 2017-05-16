@@ -14,15 +14,14 @@ module.exports.init = function(){
 module.exports.checkZappemClient = function(){
 
     // Does the Zappem client exist?
-    OAuthModel.getClient('zappem-base', null).then(function(exists){
+    OAuthModel.getClient('zappem-base', "j5)x>UU~MVRP@pdN").then(function(exists){
         if(exists == null){
             var client = new OAuthModel.clients;
             client.clientId = "zappem-base";
             client.clientSecret = "j5)x>UU~MVRP@pdN";
             client.grants = ["password"];
-            return client.save();
+            return client.save().then();
         }
-        return true;
     });
 
 };

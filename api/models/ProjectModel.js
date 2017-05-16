@@ -34,6 +34,22 @@ class Project extends Document {
             EmbeddedUser.createFromRealUser(user)
         );
     }
+
+    removeTeamMember(user_id) {
+        var count = 0,
+            found = false;
+        this.team.forEach(function(user){
+            if(user.user_id === user_id){
+                found = true;
+                return;
+            }
+            count++;
+        });
+
+        if(found) this.team.splice(count);
+        return this;
+    }
+
 }
 
 module.exports = Project;

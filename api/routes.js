@@ -10,13 +10,17 @@ module.exports = function(app){
     var auth = require('./services/AuthService.js');
 
     app.route('/projects')
-        .all(app.oauth.authenticate())
+        //.all(app.oauth.authenticate())
         .post(projectController.createNew)
         .get(projectController.showAll);
 
     app.route('/projects/:id')
         .put(projectController.updateById)
         .get(projectController.findById);
+
+    app.route('/projects/:id/team')
+        .put(projectController.addTeamMembers)
+        .delete(projectController.removeTeamMembers);
 
     app.route('/exceptions')
 	    .get(exceptionController.showAll);

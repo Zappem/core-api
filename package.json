@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --timeout=1000 --recursive",
+    "test": "mocha --timeout=5000 --recursive",
     "start": "nodemon ./api/index.js"
   },
   "author": "",

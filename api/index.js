@@ -50,7 +50,7 @@ app.launch = function() {
 
 app.launch();
 
-app.relaunchDB = function(callback){
+app.relaunchDB = function(){
     connect(dburi).then(function(db){
         app.db = db;
     }).then(function(db){

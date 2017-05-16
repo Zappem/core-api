@@ -3,7 +3,9 @@ var ProjectService = require('../services/ProjectService.js');
 module.exports = {
 
     showAll: function(req, res){
-        ProjectService.all().then(function(all){
+        var user = res.locals.oauth.token.user;
+
+        ProjectService.allAccessibleByUser(user).then(function(all){
             res.json(all);
         });
     },
@@ -30,6 +32,18 @@ module.exports = {
     createNew: function(req, res){
         ProjectService.create(req.body).then(function(proj){
             res.json(proj)
+        });
+    },
+
+    addTeamMembers: function(req, res){
+        ProjectService.addTeamMembers(req.params.id, req.body).then(function(proj){
+            res.json(proj);
+        });
+    },
+
+    removeTeamMembers: function(req, res){
+        ProjectService.removeTeamMembers(req.params.id, req.body).then(function(proj){
+            res.json(proj);
         });
     }
 };
