@@ -10,7 +10,7 @@ module.exports = function(app){
     var auth = require('./services/AuthService.js');
 
     app.route('/projects')
-        //.all(app.oauth.authenticate())
+        .all(app.oauth.authenticate())
         .post(projectController.createNew)
         .get(projectController.showAll);
 

@@ -2,26 +2,38 @@ var chai = require('../TestCase.js');
 
 var Project = require('../../api/models/ProjectModel.js');
 
-describe('Getting all projects', function() {
+describe('Getting all projects when authenticated', function() {
 
     var endpoint = "/projects";
 
+    var makeUserAndGetAccessToken = function(){
+
+    };
+
+    var makeAuthenticatedRequest = function(){
+        return new Promise(function(resolve, reject){
+            //makeUserAndGetAccessToken().then(function(token) {
+                chai.request(chai.server)
+                    .get(endpoint)
+                    .then(function (err, res) {
+                        resolve(res);
+                    });
+            //});
+        });
+    };
+
     it('should return json', function(done){
-        chai.request(chai.server)
-            .get(endpoint)
-            .end(function (err, res) {
-                chai.expect(res).to.be.json;
-                done();
-            });
+        makeAuthenticatedRequest().then(function(res){
+            chai.expect(res).to.be.json;
+            done();
+        });
     });
 
     it('should return a status 200', function(done) {
-        chai.request(chai.server)
-            .get(endpoint)
-            .end(function (err, res) {
-                chai.expect(res).to.have.status(200);
-                done();
-            });
+        makeAuthenticatedRequest().then(function(res){
+            chai.expect(res).to.have.status(200);
+            done();
+        });
     });
 
     it('should return an empty array when none saved', function(done){

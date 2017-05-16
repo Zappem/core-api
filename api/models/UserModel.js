@@ -43,6 +43,14 @@ class User extends Document {
         return this;
     }
 
+    addAssignedProject(project) {
+        // TODO: Ensure it isn't already in here
+        this.projects.push(
+            EmbeddedProject.createFromRealProject(project)
+        );
+        return this;
+    }
+
     removeAssignedException(exception_id) {
         var count = 0,
             found = false;
