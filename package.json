@@ -19,6 +19,7 @@
     "body-parser": "^1.17.1",
     "camo": "^0.12.3",
     "express": "^4.15.2",
+    "express-oauth-server": "^2.0.0-b1",
     "nedb": "^1.8.0",
     "validate.js": "^0.11.1"
   }

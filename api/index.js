@@ -5,8 +5,8 @@ var express     = require('express'),
     routes      = require('./routes.js'),
     //services    = require('./services.js'),
     app         = express(),
-    port        = process.env.PORT || 3005;
-
+    port        = process.env.PORT || 3006,
+    OAuthServer = require('express-oauth-server');
 
 var bind = {
     // services: function(app){
@@ -19,8 +19,12 @@ var bind = {
         app.listen(port);
     },
     middleware: function(app){
+        //app.use(app.oauth.token());
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(bodyParser.json());
+
+        //app.use(app.oauth.token());
+
     }
 };
 
@@ -29,9 +33,26 @@ app.launch = function() {
     return new Promise(function(res, rej){
         connect(dburi).then(function (db) {
             app.db = db;
+
+            var Auth = require('./models/OAuth.js');
+
+            // var client = new Auth.clients();
+            //
+            // client.clientId = "test";
+            // client.clientSecret = "hey!";
+            // client.grants = ["password"];
+            // client.save();
+
+            app.oauth = new OAuthServer({
+                model: require('./models/OAuth.js'),
+                grants: [
+                    'password'
+                ]
+            });
+
             bind.middleware(app);
-            bind.routes(app);
             bind.listen(app, port);
+            bind.routes(app);
             res();
         }).catch(function (e) {
             console.log(e);

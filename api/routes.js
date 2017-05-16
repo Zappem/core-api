@@ -5,8 +5,12 @@ module.exports = function(app){
     var errorController = require('./controllers/ErrorController.js');
     var userController = require('./controllers/UserController.js');
     var instanceController = require('./controllers/InstanceController.js');
+    var oauthController = require('./controllers/oauthController.js');
+
+    var auth = require('./services/AuthService.js');
 
     app.route('/projects')
+        .all(app.oauth.authenticate())
         .post(projectController.createNew)
         .get(projectController.showAll);
 
@@ -41,4 +45,11 @@ module.exports = function(app){
         .get(userController.findById)
         .put(userController.updateById);
 
+    //app.use(app.oauth.authorize());
+    //
+    // app.route('/authorize')
+    //     .get(oauthController.authorise);
+    //
+    app.route('/authorize')
+        .all(app.oauth.token());
 };
