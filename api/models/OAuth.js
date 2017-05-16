@@ -43,7 +43,6 @@ module.exports.getAccessToken = function(bearerToken){
 };
 
 module.exports.getClient = function(clientId, clientSecret) {
-    //return OAuthClients.findOne({clientId: clientSecret});
     return OAuthClients.findOne({ clientId: clientId, clientSecret: clientSecret });
 };
 

@@ -1,6 +1,6 @@
-var chai = require('../../TestCase.js');
+var chai = require('../TestCase.js');
 
-var Project = require('../../../api/models/ProjectModel.js');
+var Project = require('../../api/models/ProjectModel.js');
 
 describe('Getting all projects', function() {
 

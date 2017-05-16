@@ -1,4 +1,4 @@
-var chai = require('../../TestCase.js');
+var chai = require('../TestCase.js');
 
 const generateNewError = function(project_id){
     return {

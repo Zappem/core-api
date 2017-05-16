@@ -6,7 +6,8 @@ var express     = require('express'),
     //services    = require('./services.js'),
     app         = express(),
     port        = process.env.PORT || 3006,
-    OAuthServer = require('express-oauth-server');
+    OAuthServer = require('express-oauth-server'),
+    oauth = require('./services/AuthService.js');
 
 var bind = {
     // services: function(app){
@@ -33,30 +34,16 @@ app.launch = function() {
     return new Promise(function(res, rej){
         connect(dburi).then(function (db) {
             app.db = db;
-
-            var Auth = require('./models/OAuth.js');
-
-            // var client = new Auth.clients();
-            //
-            // client.clientId = "test";
-            // client.clientSecret = "hey!";
-            // client.grants = ["password"];
-            // client.save();
-
-            app.oauth = new OAuthServer({
-                model: require('./models/OAuth.js'),
-                grants: [
-                    'password'
-                ]
-            });
-
+            return oauth.checkZappemClient();
+        }).catch(function (e) {
+            console.log(e);
+            rej();
+        }).then(function(){
+            app.oauth = oauth.init();
             bind.middleware(app);
             bind.listen(app, port);
             bind.routes(app);
             res();
-        }).catch(function (e) {
-            console.log(e);
-            rej();
         });
     });
 };
@@ -66,7 +53,9 @@ app.launch();
 app.relaunchDB = function(callback){
     connect(dburi).then(function(db){
         app.db = db;
-    })
+    }).then(function(db){
+        return oauth.checkZappemClient();
+    });
 };
 
 module.exports = app;
