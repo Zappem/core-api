@@ -3,7 +3,7 @@ var User = require('../models/UserModel.js'),
 
 module.exports = {
 
-    canView: function(req, res, next){
+    hasAccess: function(req, res, next){
         //console.log(res.locals);
         // Does the user have permission to view this?
         User.findOne({_id: res.locals.oauth.token.userId}).then(function(user){
