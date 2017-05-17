@@ -7,7 +7,10 @@ module.exports = function(app){
     var instanceController = require('./controllers/InstanceController.js');
     var oauthController = require('./controllers/oauthController.js');
 
-    var auth = require('./services/AuthService.js');
+    var middleware = {
+        auth: require('./services/AuthService.js'),
+        project: require('./middleware/ProjectMiddleware.js')
+    };
 
     app.route('/projects')
         .all(app.oauth.authenticate())
@@ -15,10 +18,13 @@ module.exports = function(app){
         .get(projectController.showAll);
 
     app.route('/projects/:id')
+        .all(app.oauth.authenticate())
+        .all(middleware.project.doesExist)
         .put(projectController.updateById)
-        .get(projectController.findById);
+        .get(middleware.project.canView, projectController.findById);
 
     app.route('/projects/:id/team')
+        .all(middleware.project.doesExist)
         .put(projectController.addTeamMembers)
         .delete(projectController.removeTeamMembers);
 
