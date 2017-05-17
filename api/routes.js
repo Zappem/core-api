@@ -9,7 +9,8 @@ module.exports = function(app){
 
     var middleware = {
         auth: require('./services/AuthService.js'),
-        project: require('./middleware/ProjectMiddleware.js')
+        project: require('./middleware/ProjectMiddleware.js'),
+        exception: require('./middleware/ExceptionMiddleware.js')
     };
 
     app.route('/projects')
@@ -25,27 +26,36 @@ module.exports = function(app){
         .delete(middleware.project.hasAccess, projectController.deleteById);
 
     app.route('/projects/:id/team')
+        .all(app.oauth.authenticate())
         .all(middleware.project.doesExist)
         .put(projectController.addTeamMembers)
         .delete(projectController.removeTeamMembers);
 
     app.route('/exceptions')
+        .all(app.oauth.authenticate())
 	    .get(exceptionController.showAll);
 
     app.route('/exceptions/:id')
+        .all(app.oauth.authenticate())
+        .all(middleware.exception.doesExist)
         .get(exceptionController.findById);
 
     app.route('/exceptions/:id/assign')
+        .all(app.oauth.authenticate())
+        .all(middleware.exception.doesExist)
         .put(exceptionController.assignUser)
         .delete(exceptionController.unassignUser);
 
     app.route('/instances')
+        .all(app.oauth.authenticate())
         .get(instanceController.showAll);
 
     app.route('/instances/:id')
+        .all(app.oauth.authenticate())
         .get(instanceController.findById);
 
     app.route('/error')
+        .all(app.oauth.authenticate())
         .post(errorController.createNew);
 
     app.route('/users')
@@ -53,6 +63,7 @@ module.exports = function(app){
         .post(userController.createNew);
 
     app.route('/users/:id')
+        .all(app.oauth.authenticate())
         .get(userController.findById)
         .put(userController.updateById);
 
