@@ -6,7 +6,7 @@ var express     = require('express'),
     //services    = require('./services.js'),
     app         = express(),
     port        = process.env.PORT || 3006,
-    OAuthServer = require('express-oauth-server'),
+    userAuth    = require('./middleware/UserAuth.js'),
     oauth = require('./services/AuthService.js');
 
 var bind = {
@@ -20,12 +20,8 @@ var bind = {
         app.listen(port);
     },
     middleware: function(app){
-        //app.use(app.oauth.token());
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(bodyParser.json());
-
-        //app.use(app.oauth.token());
-
     }
 };
 
@@ -34,12 +30,12 @@ app.launch = function() {
     return new Promise(function(res, rej){
         connect(dburi).then(function (db) {
             app.db = db;
-            return oauth.checkZappemClient();
+            return oauth.init();
         }).catch(function (e) {
             console.log(e);
             rej();
         }).then(function(){
-            app.oauth = oauth.init();
+            app.oauth = oauth.start();
             bind.middleware(app);
             bind.listen(app, port);
             bind.routes(app);
@@ -54,7 +50,7 @@ app.relaunchDB = function(){
     connect(dburi).then(function(db){
         app.db = db;
     }).then(function(db){
-        return oauth.checkZappemClient();
+        return oauth.init();
     });
 };
 

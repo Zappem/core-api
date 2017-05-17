@@ -7,16 +7,17 @@ module.exports = function(app){
     var instanceController = require('./controllers/InstanceController.js');
     var oauthController = require('./controllers/oauthController.js');
 
-    var auth = require('./services/AuthService.js');
+    var AuthService = require('./services/AuthService.js');
 
     app.route('/projects')
         .all(app.oauth.authenticate())
-        .post(projectController.createNew)
-        .get(projectController.showAll);
+        .post(AuthService.canWriteProjects, projectController.createNew)
+        .get(AuthService.canViewProjects, projectController.showAll);
 
     app.route('/projects/:id')
-        .put(projectController.updateById)
-        .get(projectController.findById);
+        .all(app.oauth.authenticate())
+        .put(AuthService.canWriteProjects, projectController.updateById)
+        .get(AuthService.canViewThisProject, projectController.findById);
 
     app.route('/projects/:id/team')
         .put(projectController.addTeamMembers)

@@ -1,5 +1,6 @@
 var Project = require('../models/ProjectModel.js');
 var UserService = require('./UserService.js');
+//var ErrorHandler = require('./ErrorHandlerService.js');
 
 module.exports = {
 
@@ -22,7 +23,9 @@ module.exports = {
     },
 
     findById: function(id){
-        return Project.findOne({_id: id});
+        //return new Promise(function(res, rej){
+            return Project.findOne({_id: id});
+        //})
     },
 
     doesProjectExist: function(id){
