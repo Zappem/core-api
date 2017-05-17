@@ -8,7 +8,7 @@ module.exports = {
         // Does the user have permission to view this?
         User.findOne({_id: res.locals.oauth.token.userId}).then(function(user){
             user.projects.forEach(function(project){
-                if(project._id == req.params.id) next()
+                if(project._id == req.params.id) return next();
             });
 
             res.status(403).json({
@@ -20,7 +20,7 @@ module.exports = {
 
     doesExist: function(req, res, next){
         Project.count({_id: req.params.id}).then(function(count){
-            if(count > 0) next();
+            if(count > 0) return next();
 
             res.status(404).json({
                 "error": "Project not found"

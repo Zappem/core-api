@@ -22,8 +22,7 @@ module.exports = {
     },
 
     findById: function(id){
-        //return new Promise(function(res, rej){
-            return Project.findOne({_id: id});
+        return Project.findOne({_id: id});
     },
 
     doesProjectExist: function(id){
