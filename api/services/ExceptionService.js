@@ -1,10 +1,15 @@
 var Exception = require('../models/ExceptionModel.js');
-var Services = {
-    Projects: require('./ProjectService.js'),
-    Users: require('./UserService.js')
-};
+// var Services = {
+//     Projects: require('./ProjectService.js'),
+//     Users: require('./UserService.js')
+// };
 
 module.exports = {
+
+    Services: {
+        Projects: require('./ProjectService.js'),
+        Users: require('./UserService.js')
+    },
 
     all: function(){
         return Exception.find({});
@@ -19,7 +24,7 @@ module.exports = {
     },
 
     findById: function(id){
-        return this.findOne({_id: id});
+        return Exception.findOne({_id: id});
     },
 
     findOne: function(query) {
@@ -32,7 +37,7 @@ module.exports = {
 
     create: function (data) {
         // Get the project first.
-        return Services.Projects.findById(data.projectID).then(function(proj){
+        return this.Services.Projects.findById(data.project_id).then(function(proj){
             data.project = {
                 project_id: proj._id,
                 name: proj.name
@@ -50,15 +55,13 @@ module.exports = {
     },
 
     assignUser: function(exception_id, user_id){
+        // TODO: Check if this is an actual user
         var obj = this;
         return Promise.all([
             Services.Users.findById(user_id),
             obj.findById(exception_id)
         ]).then(function(data){
-            data[1].assigned_to.user_id = user_id;
-            data[1].assigned_to.first_name = data[0].first_name;
-            data[1].assigned_to.last_name = data[0].last_name;
-            data[1].assigned_to.profile_img = data[0].profile_img;
+            data[1].addAssignee(data[0]);
             return Promise.all([
                 data[1].save(),
                 Services.Users.addAssignedException(user_id, exception_id)
@@ -67,8 +70,9 @@ module.exports = {
     },
 
     unassignUser: function(exception_id, user_id){
-        this.findById(exception_id).then(function(exception){
-            exception.assigned_to = {};
+        // TODO: Check if this is an actual user
+        return this.findById(exception_id).then(function(exception){
+            exception.removeAssignee();
             return Promise.all([
                 exception.save(),
                 Services.Users.removeAssignedException(user_id, exception_id)

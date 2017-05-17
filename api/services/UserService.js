@@ -22,12 +22,22 @@ module.exports = {
         return User.find({"project.project_id": id});
     },
 
+    accessibleProjects: function(user){
+        var obj = this;
+        return new Promise(function(resolve, reject){
+            obj.findById(user._id).then(function(user) {
+                var ids = [];
+                user.projects.forEach(function (project) {
+                    ids.push(project.project_id);
+                });
+                resolve(ids);
+            });
+        });
+    },
+
     addAssignedException: function(user_id, exception_id){
         return User.findOne({_id: user_id}).then(function(user){
-            // TODO: This is a right pain - it's expecting an instance of EmbeddedException.
-            user.assigned_exceptions.push({
-                exception_id: exception_id
-            });
+            user.addAssignedException(exception_id);
             return user.save();
         });
     },
@@ -35,11 +45,7 @@ module.exports = {
     removeAssignedException: function(user_id, exception_id){
         return User.findOne({_id: user_id}).then(function(user){
              var count = 0;
-             user.assigned_exceptions.forEach(function(exception){
-                if(exception.exception_id === exception_id) return;
-                count++;
-             });
-             user.splice(count);
+             user.removeAssignedException(exception_id);
              return user.save();
         });
     },

@@ -8,6 +8,7 @@ module.exports = {
     },
 
     createNew: function(req, res){
+        console.log(req.body);
         UserService.create(req.body).then(function(user){
             res.json(user);
         });

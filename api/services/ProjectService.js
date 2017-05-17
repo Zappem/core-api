@@ -1,17 +1,35 @@
 var Project = require('../models/ProjectModel.js');
-var Services = {
-    Exceptions: require('./ExceptionService.js'),
-    Users: require('./UserService.js')
-};
+var UserService = require('./UserService.js');
 
 module.exports = {
 
-    all: function(){
+    Services: {
+        Exceptions: require('./ExceptionService.js'),
+        Users: require('./UserService.js')
+    },
+
+    all: function(user){
         return Project.find({});
     },
 
+    allAccessibleByUser: function(user){
+        // Get an array of project ID's they have access to,
+        return UserService.accessibleProjects(user).then(function(projects) {
+            return Project.find({
+                _id: {$in: projects}
+            });
+        });
+    },
+
     findById: function(id){
-        return Project.findOne({_id: id});
+        //return new Promise(function(res, rej){
+            return Project.findOne({_id: id});
+    },
+
+    doesProjectExist: function(id){
+        return Project.count({_id: id}).then(function(count){
+            return count !== 0 ? true : false;
+        });
     },
 
     create: function(data){
@@ -20,18 +38,44 @@ module.exports = {
             name: data.name
         });
 
-        data.team.forEach(function(userid){
-            //create.addTeamMember
-        });
-
         return create.save();
     },
 
+    addTeamMembers: function(project_id, data){
+        // TODO: Validation
+        return this.findById(project_id).then(function(project) {
+            var getTeam = [],
+                user = null;
+            data.team.forEach(function (userid) {
+                // Make an EmbeddedUser object and push it in.
+                user = UserService.findById(userid);
+                getTeam.push(user);
+            });
+
+            return Promise.all(getTeam).then(function (users) {
+                users.forEach(function (user) {
+                    project.addTeamMember(user);
+                    user.addAssignedProject(project).save();
+                });
+                return project.save();
+            })
+        });
+    },
+
+    revokeTeamMembers: function(project_id, data){
+        return this.findById(project_id).then(function(project) {
+            data.team.forEach(function (user) {
+                project.removeTeamMember(user);
+            })
+        });
+    },
+
     updateById: function(id, data){
+        var obj = this;
         return Promise.all([
             Project.findOneAndUpdate({_id: id}, data),
             // We also need to update all exceptions within this project.
-            Services.Exceptions.findByProjectId(id).then(function(exceptions){
+            obj.Services.Exceptions.findByProjectId(id).then(function(exceptions){
                 var excepPromise = [];
                 exceptions.forEach(function(exception) {
                     exception.project.name = data.name;
@@ -40,7 +84,7 @@ module.exports = {
                 return Promise.all(excepPromise);
             }),
             // We also need to update all users that belong to this project.
-            Services.Users.findByProjectId(id).then(function(users){
+            obj.Services.Users.findByProjectId(id).then(function(users){
                 var usrPromise = [];
                 users.forEach(function(user){
                     user.project.name = data.name;
@@ -53,10 +97,6 @@ module.exports = {
 
     findByAssignedUser: function(id){
         return Project.find({"team.user_id":id});
-    },
-
-    search: function(term){
-
     }
 
 };

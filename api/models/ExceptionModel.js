@@ -12,11 +12,6 @@ class Exception extends Document {
             required: true
         };
 
-        this.fullMessage = {
-            type: String,
-            required: true
-        };
-
         this.times = {
             type: Number,
             default: 1
@@ -24,7 +19,11 @@ class Exception extends Document {
 
         this.stack = [EmbeddedStack];
 
-        this.assigned_to = EmbeddedUser;
+        this.assigned_to = {
+            type: EmbeddedUser,
+            required: false,
+            default: null
+        };
 
         this.project = {
             type: EmbeddedProject,
@@ -41,17 +40,28 @@ class Exception extends Document {
             required: true
         };
 
-        this.firstSeen = {
+        this.first_seen = {
             type: Date,
             default: Date.now
         };
 
-        this.lastSeen = {
+        this.last_seen = {
             type: Date,
             default: Date.now
         };
 
     }
+
+    addAssignee(user) {
+        this.assigned_to = EmbeddedUser.createFromRealUser(user);
+        return this;
+    }
+
+    removeAssignee() {
+        this.assigned_to = null;
+        return this;
+    }
+
 }
 
 module.exports = Exception;

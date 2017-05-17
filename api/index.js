@@ -1,17 +1,18 @@
 var express     = require('express'),
     bodyParser  = require('body-parser'),
     connect     = require('camo').connect,
-    dburi       = 'nedb://'+__dirname+'/storage',
+    dburi       = process.env.NODE_DB || 'nedb://'+__dirname+'/storage',
     routes      = require('./routes.js'),
-    services    = require('./services.js'),
+    //services    = require('./services.js'),
     app         = express(),
-    port        = process.env.PORT || 3002;
-
+    port        = process.env.PORT || 3006,
+    OAuthServer = require('express-oauth-server'),
+    oauth = require('./services/AuthService.js');
 
 var bind = {
-    services: function(app){
-        app.services = services.init(app);
-    },
+    // services: function(app){
+    //     app.services = services.init(app);
+    // },
     routes: function(app){
         routes(app);
     },
@@ -19,21 +20,42 @@ var bind = {
         app.listen(port);
     },
     middleware: function(app){
+        //app.use(app.oauth.token());
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(bodyParser.json());
+
+        //app.use(app.oauth.token());
+
     }
 };
 
-/* Connect to the db */
-connect(dburi).then(function(db) {
-    app.db = db;
+app.launch = function() {
+    /* Connect to the db */
+    return new Promise(function(res, rej){
+        connect(dburi).then(function (db) {
+            app.db = db;
+            return oauth.checkZappemClient();
+        }).catch(function (e) {
+            console.log(e);
+            rej();
+        }).then(function(){
+            app.oauth = oauth.init();
+            bind.middleware(app);
+            bind.listen(app, port);
+            bind.routes(app);
+            res();
+        });
+    });
+};
 
-    bind.middleware(app);
-    bind.services(app);
-    bind.routes(app);
-    bind.listen(app, port);
+app.launch();
 
-}).catch(function(e){
-    console.log(e);
-});
+app.relaunchDB = function(){
+    connect(dburi).then(function(db){
+        app.db = db;
+    }).then(function(db){
+        return oauth.checkZappemClient();
+    });
+};
 
+module.exports = app;

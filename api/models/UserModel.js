@@ -35,6 +35,37 @@ class User extends Document {
 
         this.assigned_exceptions = [EmbeddedException];
     }
+
+    addAssignedException(exception_id) {
+        var exception = EmbeddedException.create();
+        exception.exception_id = exception_id;
+        this.assigned_exceptions.push(exception);
+        return this;
+    }
+
+    addAssignedProject(project) {
+        // TODO: Ensure it isn't already in here
+        this.projects.push(
+            EmbeddedProject.createFromRealProject(project)
+        );
+        return this;
+    }
+
+    removeAssignedException(exception_id) {
+        var count = 0,
+            found = false;
+        this.assigned_exceptions.forEach(function(exception){
+            if(exception.exception_id === exception_id){
+                found = true;
+                return;
+            }
+            count++;
+        });
+
+        if(found) this.assigned_exceptions.splice(count);
+        return this;
+    };
+
 }
 
 class EmbeddedException extends EmbeddedDocument {

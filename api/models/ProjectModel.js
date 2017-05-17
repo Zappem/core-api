@@ -1,5 +1,4 @@
 var Document = require('camo').Document;
-var EmbeddedDocument = require('camo').EmbeddedDocument;
 var EmbeddedUser = require('./EmbeddedUser.js');
 
 class Project extends Document {
@@ -14,25 +13,43 @@ class Project extends Document {
 
         this.team = [EmbeddedUser];
 
-        this.dateCreated = {
+        this.date_created = {
             type: Date,
             default: Date.now
         };
 
-        this.lastOccurrence = {
+        this.last_occurrence = {
             type: Date,
             default: null
         };
 
-        this.lastNewError = {
+        this.last_new_error = {
             type: Date,
             default: null
         };
     };
 
-    addTeamMember() {
-
+    addTeamMember(user) {
+        return this.team.push(
+            EmbeddedUser.createFromRealUser(user)
+        );
     }
+
+    removeTeamMember(user_id) {
+        var count = 0,
+            found = false;
+        this.team.forEach(function(user){
+            if(user.user_id === user_id){
+                found = true;
+                return;
+            }
+            count++;
+        });
+
+        if(found) this.team.splice(count);
+        return this;
+    }
+
 }
 
 module.exports = Project;

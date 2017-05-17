@@ -1,0 +1,535 @@
+swagger: "2.0"
+info:
+  description: "This is the documentation for the Zappem Core API. All Zappem's functionality is accessible using this."
+  version: "1.0.0"
+  title: "Zappem API"
+  termsOfService: "https://zappem.xyz/terms"
+  contact:
+    email: "support@zappem.xyz"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "localhost:3002"
+#basePath: "/v1"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+tags:
+- name: "Projects"
+  description: "Access Projects you own or belong to"
+- name: "Users"
+  description: "Access Users of this Zappem installation"
+- name: "Exceptions"
+  description: "Access Exceptions belonging to projects you have access to"
+- name: "Instances"
+  description: "Access Instances of Exceptions"
+- name: "Errors"
+  description: "Notify Zappem of a new error in a project"
+schemes:
+- "http"
+paths:
+
+  /error:
+    post:
+      tags:
+      - "Errors"
+      summary: "Send an error to Zappem"
+      description: "This will decide whether or not the exception has been seen before - and will create both an instance and an exception if it's new, or just an instance if it's been seen before."
+      parameters:
+      - name: "body"
+        in: "body"
+        schema:
+          type: "object"
+          properties:
+            message:
+              type: "string"
+              required: true
+              description: "The error message"
+              example: "HomeController::index: Undefined variable $data"
+            project_id:
+              type: "string"
+              required: true
+              description: "The ID of the project which this error belongs to"
+              example: "9kdlfnJR3j"
+            language:
+              type: "string"
+              required: false
+              default: "unknown"
+              description: "The programming language where the error came from"
+              example: "PHP"
+            environment:
+              type: "string"
+              required: false
+              default: "unknown"
+              description: "The environment where the error came from"
+              enum: ["local", "production", "testing", "unknown"]
+            stack:
+              $ref: '#/definitions/Stacks'
+              required: false
+      responses:
+        200:
+          description: "Error was added"
+        404:
+          description: "Project was not found"
+        405:
+          description: "Validation error"
+
+
+
+  /projects:
+    get:
+      tags:
+      - "Projects"
+      summary: "Retrieve all projects you have access to"
+      description: "This includes both projects you own and projects where you are a team member"
+      operationId: "allProjects"
+      responses:
+        200:
+          description: "Projects retrieved"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Project"
+      security:
+      - zappem_auth:
+        - "read:projects"
+    post:
+      tags:
+      - "Projects"
+      summary: "Create a new project"
+      description: "Creates a new project belonging to the authenticated user"
+      operationId: "createProject"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Project object to be created"
+        required: true
+        schema:
+          type: "object"
+          properties:
+            name:
+              type: "string"
+              description: "Name of the new project"
+            team:
+              type: "array"
+              items:
+                type: "string"
+                description: "ID of user"
+      responses:
+        200:
+          description: "Project created"
+          schema:
+            $ref: "#/definitions/Project"
+        405:
+          description: "Validation exception"
+      security:
+      - zappem_auth:
+        - "write:projects"
+        - "read:projects"
+  /projects/{id}:
+    get:
+      tags:
+      - "Projects"
+      summary: "Gets a project by the ID"
+      description: "Retreives a project along with the team"
+      operationId: "findProjectById"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of the project to retrieve"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Project retrieved"
+          schema:
+            $ref: "#/definitions/Project"
+        400:
+          description: "Invalid Project ID"
+        404:
+          description: "Project was not found"
+      security:
+      - zappem_auth:
+        - "read:projects"
+    put:
+      tags:
+      - "Projects"
+      summary: "Updates a project"
+      description: "Allows you to update a project name"
+      operationId: "updateProject"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of the project to update"
+        required: true
+        type: "string"
+      - name: "data"
+        in: "body"
+        schema:
+          properties:
+            name:
+              type: "string"
+              description: "New name for this project"
+              required: true
+      responses:
+        200:
+          description: "Project updated"
+          schema:
+            $ref: "#/definitions/Project"
+        400:
+          description: "Invalid Project ID"
+        404:
+          description: "Project was not found"
+        405:
+          description: "Validation error"
+      security:
+      - zappem_auth:
+        - "write:projects"
+        - "read:projects"
+    delete:
+      tags:
+      - "Projects"
+      summary: "Delete a project"
+      description: "Use with caution - deleting a project will remove all exceptions, instances and comments associated with it."
+      operationId: "deleteProject"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of project to delete"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Project was deleted"
+        400:
+          description: "Invalid project ID"
+        404:
+          description: "Project not found"
+      security:
+      - zappem_auth:
+        - "write:projects"
+        - "read:projects"
+        - "destroy:projects"
+
+
+  /exceptions:
+    get:
+      tags:
+      - "Exceptions"
+      summary: "Get all exceptions for projects you have access to"
+      responses:
+        200:
+          description: "Exceptions retrieved"
+  /exception/{id}:
+    get:
+      tags:
+      - "Exceptions"
+      summary: "Get an exception by the ID"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of the exception to retrieve"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Exception retrieved"
+          schema:
+            $ref: '#/definitions/Exception'
+        400:
+          description: "Invalid exception ID"
+        404:
+          description: "Exception not found"
+      security:
+      - zappem_auth:
+        - "read:exceptions"
+  /exceptions/{id}/assign:
+    put:
+      tags:
+      - "Exceptions"
+      summary: "Assign an exception to a user"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of the exception to assign"
+        type: "string"
+        example: "jgg84F92nA"
+        required: true
+      - name: "data"
+        in: "body"
+        type: "object"
+        required: true
+        properties:
+          user_id:
+            type: "string"
+            description: "ID of the user to assign"
+      responses:
+        200:
+          description: "Exception assigned to user"
+          schema:
+            $ref: '#/definitions/Exception'
+        400:
+          description: "Invalid exception ID"
+        404:
+          description: "Exception not found"
+        405:
+          description: "user_id missing or invalid user_id specified"
+    delete:
+      tags:
+      - "Exceptions"
+      summary: "Unassign a user from an exception"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of the exception to unassign"
+        type: "string"
+        example: "jgg84F92nA"
+        required: true
+      - name: "data"
+        in: "body"
+        type: "object"
+        required: true
+        properties:
+          user_id:
+            type: "string"
+            description: "ID of the user to unassign"
+      responses:
+        200:
+          description: "Exception unassigned"
+          schema:
+            $ref: '#/definitions/Exception'
+        400:
+          description: "Invalid exception ID"
+        404:
+          description: "Exception not found"
+        405:
+          description: "user_id missing or invalid user_id specified"
+
+  /instances:
+    get:
+      tags:
+      - "Instances"
+      summary: "Get all instances of exceptions belonging to projects you have access to"
+      responses:
+        200:
+          description: "Instances retrieved"
+  /instances/{id}:
+    get:
+      tags:
+      - "Instances"
+      summary: "Get a specific instance"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+        description: "ID of the instance to retrieve"
+      responses:
+        200:
+          description: "Instance retrieved"
+
+  /users:
+    get:
+      tags:
+      - "Users"
+      summary: "Gets all users"
+      responses:
+        200:
+          description: "User retrieved"
+    post:
+      tags:
+      - "Users"
+      summary: "Creates a new user"
+      parameters:
+      - name: "data"
+        in: "body"
+        description: "New user data"
+        schema:
+          type: "object"
+          properties:
+            first_name:
+              type: "string"
+              example: "Dan"
+              required: true
+            last_name:
+              type: "string"
+              example: "Johnson"
+              required: true
+      responses:
+        200:
+          description: "User created"
+        405:
+          description: "Validation exception"
+
+  /users/{id}:
+    get:
+      tags:
+      - "Users"
+      summary: "Retrieves a user"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The ID of the user to retrieve"
+      responses:
+        200:
+          description: "User retrieved"
+        404:
+          description: "User not found"
+    put:
+      tags:
+      - "Users"
+      summary: "Updates a user"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "The ID of the user to update"
+      - name: "data"
+        in: "body"
+        schema:
+          type: "object"
+          properties:
+            first_name:
+              type: "string"
+            last_name:
+              type: "string"
+      responses:
+        200:
+          description: "User updated"
+        404:
+          description: "User not found"
+        405:
+          description: "Validation error"
+
+
+
+
+
+securityDefinitions:
+  zappem_auth:
+    type: "oauth2"
+    authorizationUrl: "http://api.zappem.xyz/authorize"
+    flow: "implicit"
+    scopes:
+      write:projects: "Modify projects you own"
+      read:projects: "Read projects you have access to"
+      destroy:projects: "Destroy projects you own"
+      read:exceptions: "Read exceptions from projects you have access to"
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
+definitions:
+  Project:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "Project ID"
+        example: "9kdlfnJR3j"
+      name:
+        type: "string"
+        description: "Name of the project"
+        example: "My Application"
+      team:
+        type: "array"
+        items:
+          $ref: '#/definitions/EmbeddedUser'
+        description: "An array of users who have access to this project"
+      date_created:
+        type: "string"
+        format: "date-time"
+        description: "When this project was created"
+      last_occurrence:
+        type: "string"
+        format: "date-time"
+        description: "The last time this project had an instance of an error"
+      last_new_error:
+        type: "string"
+        format: "date-time"
+        description: "The last time this project had a new error"
+  EmbeddedUser:
+    type: "object"
+    properties:
+      user_id:
+        type: "string"
+        description: "The ID of the user"
+        example: "jgg84F92nA"
+      first_name:
+        type: "string"
+        description: "The user's first name"
+        example: "Dan"
+      last_name:
+        type: "string"
+        description: "The user's last name"
+        example: "Johnson"
+      profile_img:
+        type: "string"
+        description: "The filename of the user's profile image"
+  Exception:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+        description: "The error message"
+        example: "HomeController::index: Undefined variable $data"
+      times:
+        type: "integer"
+        description: "The number of times this error has occurred"
+        example: 63420
+      language:
+        type: "string"
+        description: "The programming language where the error came from"
+        example: "PHP"
+      environment:
+        type: "string"
+        description: "The environment where the error came from"
+        enum: ["local", "production", "testing", "unknown"]
+        example: "production"
+        default: "unknown"
+      first_seen:
+        type: "string"
+        format: "date-time"
+        description: "The date and time of when the first occurrence of this error happened"
+      last_seen:
+        type: "string"
+        format: "date-time"
+        description: "The date and time of when the latest occurrence of this error happened"
+      stack:
+        $ref: '#/definitions/Stacks'
+      assigned_to:
+        $ref: '#/definitions/EmbeddedUser'
+      project:
+        $ref: '#/definitions/EmbeddedProject'
+  Stacks:
+    type: "array"
+    description: "The stacktrace from the error"
+    items:
+      type: "object"
+      properties:
+        file:
+          type: "string"
+          description: "The name of the file, relative to the project root"
+          example: "/controllers/HomeController.php"
+          default: null
+        line:
+          type: "integer"
+          description: "The line number where the error originated"
+          example: 63
+        class:
+          type: "string"
+          description: "The name of the class where the error originated"
+  EmbeddedProject:
+    type: "object"
+    properties:
+      project_id:
+        type: "string"
+        description: "The ID of the project"
+      name:
+        type: "string"
+        description: "The name of the project"
+
+
+externalDocs:
+  description: "Find out more about Zappem"
+  url: "http://zappem.xyz"

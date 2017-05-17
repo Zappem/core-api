@@ -1,7 +1,7 @@
-var Services = {
-    Exceptions: require('./ExceptionService.js'),
-    Instances: require('./InstanceService.js')
-};
+const   ExceptionService = require('./ExceptionService.js'),
+        InstanceService = require('./InstanceService.js');
+
+var Validation = require('../validation/NewError.js');
 
 module.exports = {
 
@@ -11,10 +11,34 @@ module.exports = {
      * @param data
      */
     add: function(data){
+        var obj = this,
+            errors = [];
+
+        return new Promise(function(resolve, reject){
+            Validation(data).then(function(data){
+
+                var create = obj.create(data);
+                create.then(function(data){
+                    return resolve(data);
+                }).catch(function(data){
+                    return reject(data);
+                });
+
+            }).catch(function(errors){
+                return reject({
+                    success: false,
+                    error: "Validation Error",
+                    errors: errors
+                });
+            });
+        });
+
+    },
+
+    create: function(data) {
         var obj = this;
         // Have we seen this error before?
         return this.alreadyExists(data).then(function(exception){
-
             if(exception){
                 data.error_id = exception._id;
                 return obj.addNewInstance(data);
@@ -25,11 +49,11 @@ module.exports = {
         }).then(function(error){
             return error;
         });
-
     },
 
     alreadyExists: function(data){
-        return Services.Exceptions.findOne({
+        return ExceptionService.findOne({
+            "project.project_id": data.project_id,
             message: data.message,
             language: data.language,
             environment: data.environment
@@ -38,15 +62,15 @@ module.exports = {
 
     addNewInstance: function(data){
         return Promise.all([
-            Services.Instances.create(data),
-            Services.Exceptions.incrementTimes(data.error_id)
+            InstanceService.create(data),
+            ExceptionService.incrementTimes(data.error_id)
         ]);
     },
 
     addNewException: function(data){
-        return Services.Exceptions.create(data).then(function(exc){
+        return ExceptionService.create(data).then(function(exc){
             data.error_id = exc._id;
-            return Services.Instances.create(data);
+            return InstanceService.create(data);
         });
     }
 };
