@@ -23,6 +23,10 @@ module.exports = {
         });
     },
 
+    deleteById: function(req, res){
+        // TODO: Implement this
+    },
+
     updateById: function(req, res){
         ProjectService.updateById(req.params.id, req.body).then(function(proj){
             res.json(proj);

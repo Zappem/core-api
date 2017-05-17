@@ -20,8 +20,9 @@ module.exports = function(app){
     app.route('/projects/:id')
         .all(app.oauth.authenticate())
         .all(middleware.project.doesExist)
-        .put(projectController.updateById)
-        .get(middleware.project.canView, projectController.findById);
+        .put(middleware.project.hasAccess, projectController.updateById)
+        .get(middleware.project.hasAccess, projectController.findById)
+        .delete(middleware.project.hasAccess, projectController.deleteById);
 
     app.route('/projects/:id/team')
         .all(middleware.project.doesExist)
