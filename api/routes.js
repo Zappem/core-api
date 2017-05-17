@@ -10,7 +10,8 @@ module.exports = function(app){
     var middleware = {
         auth: require('./services/AuthService.js'),
         project: require('./middleware/ProjectMiddleware.js'),
-        exception: require('./middleware/ExceptionMiddleware.js')
+        exception: require('./middleware/ExceptionMiddleware.js'),
+        instance: require('./middleware/InstanceMiddleware.js')
     };
 
     app.route('/projects')
@@ -52,6 +53,7 @@ module.exports = function(app){
 
     app.route('/instances/:id')
         .all(app.oauth.authenticate())
+        .all(middleware.instance.doesExist)
         .get(instanceController.findById);
 
     app.route('/error')
