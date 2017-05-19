@@ -11,7 +11,8 @@ module.exports = function(app){
         auth: require('./services/AuthService.js'),
         project: require('./middleware/ProjectMiddleware.js'),
         exception: require('./middleware/ExceptionMiddleware.js'),
-        instance: require('./middleware/InstanceMiddleware.js')
+        instance: require('./middleware/InstanceMiddleware.js'),
+		users: require('./middleware/UserMiddleare.js')
     };
 
     app.route('/projects')
