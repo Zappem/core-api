@@ -12,7 +12,7 @@ module.exports = function(app){
         project: require('./middleware/ProjectMiddleware.js'),
         exception: require('./middleware/ExceptionMiddleware.js'),
         instance: require('./middleware/InstanceMiddleware.js'),
-		users: require('./middleware/UserMiddleare.js')
+		users: require('./middleware/UserMiddleware.js')
     };
 
     app.route('/projects')
