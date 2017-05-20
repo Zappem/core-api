@@ -11,7 +11,8 @@ module.exports = function(app){
         auth: require('./services/AuthService.js'),
         project: require('./middleware/ProjectMiddleware.js'),
         exception: require('./middleware/ExceptionMiddleware.js'),
-        instance: require('./middleware/InstanceMiddleware.js')
+        instance: require('./middleware/InstanceMiddleware.js'),
+		user: require('./middleware/UserMiddleware.js')
     };
 
     app.route('/projects')
@@ -66,6 +67,7 @@ module.exports = function(app){
 
     app.route('/users/:id')
         .all(app.oauth.authenticate())
+		.all(middleware.user.doesExist)
         .get(userController.findById)
         .put(userController.updateById);
 
