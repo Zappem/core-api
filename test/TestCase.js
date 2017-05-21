@@ -7,6 +7,11 @@ var chai = require('chai'),
 chai.use(chaiHttp);
 chai.server = require('../api/index.js');
 
+chai.helpers = {
+    users: require('./helpers/users.js'),
+    projects: require('./helpers/projects.js')
+};
+
 beforeEach(function(){
     return chai.server.relaunchDB();
 });

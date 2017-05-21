@@ -12,7 +12,7 @@ var makeDummyUser = function() {
     return User.create({
         first_name: "Dan",
         last_name: "Johnson",
-        email: "test@example.com",
+        email: "tests@example.com",
         password: "password"
     }).save();
 };

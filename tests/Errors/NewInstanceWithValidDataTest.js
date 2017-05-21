@@ -1,5 +1,5 @@
 // // //During the test the env variable is set to test
-// // process.env.NODE_ENV = 'test';
+// // process.env.NODE_ENV = 'tests';
 // // process.env.DB = 'nedb://memory';
 // //
 // // //let mongoose = require("mongoose");
@@ -14,7 +14,7 @@
 // // chai.use(chaiHttp);
 // //Our parent block
 // // describe('Books', function(){
-// //     beforeEach((done) => { //Before each test we empty the database
+// //     beforeEach((done) => { //Before each tests we empty the database
 // //     Book.remove({}, (err) => {
 // //         done();
 // // });

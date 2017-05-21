@@ -5,7 +5,7 @@ var createUser = function(){
     return User.create({
         first_name: "Dan",
         last_name: "Johnson",
-        email: "test@example.com",
+        email: "tests@example.com",
         password: "password"
     }).save();
 };
@@ -15,7 +15,7 @@ var makeValidAuthoriseRequest = function(callback){
         chai.request(chai.server)
             .post('/authorize')
             .send('grant_type=password')
-            .send('username=test@example.com')
+            .send('username=tests@example.com')
             .send('password=password')
             .auth('zappem-base', 'j5)x>UU~MVRP@pdN')
             .end(function (err, res) {
