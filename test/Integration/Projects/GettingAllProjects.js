@@ -13,8 +13,9 @@ describe('Getting all accessible by user', function(){
             email: "test@example.com",
             password: "password"
         }).then(function(newUsr){
+			user = newUsr;
             chai.helpers.auth.getTokenForUser(newUsr).then(function(access_token){
-                token = access_token;
+                token = access_token.accessToken;
                 ready();
             });
         });
@@ -22,8 +23,8 @@ describe('Getting all accessible by user', function(){
 
     var makeRequestWithAuth = function(){
         return chai.request(chai.server)
-            .set('Authorization', 'Bearer '+token)
-            .get("/projects");
+			.get("/projects")
+			.set('Authorization', 'Bearer '+token);
     };
 
     var makeRequestWithoutAuth = function(){
@@ -42,7 +43,7 @@ describe('Getting all accessible by user', function(){
 
         it('should be an empty array', function (done) {
             makeRequestWithAuth().then(function(output){
-                chai.expect(output).to.have.lengthOf(0);
+                chai.expect(output.body).to.have.lengthOf(0);
                 done();
             })
         });
@@ -93,6 +94,8 @@ describe('Getting all accessible by user', function(){
         });
 
     });
+
+});
 
 //     describe('when one is assigned to another user', function(){
 //

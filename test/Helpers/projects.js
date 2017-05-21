@@ -5,8 +5,9 @@ module.exports.make = function(data){
 };
 
 module.exports.addTeamMember = function(user, project){
-    project.addTeamMember(user);
+	project.addTeamMember(user);
     user.addAssignedProject(project);
+
     return Promise.all([
         project.save(),
         user.save()
