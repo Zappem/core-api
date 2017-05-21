@@ -5,14 +5,12 @@ module.exports.make = function(data){
 };
 
 module.exports.addTeamMember = function(user, project){
-    return Project.findOne({_id: project._id}).then(function(proj){
-        proj.addTeamMember(user);
-        user.addAssignedProject(project);
-        return Promise.all([
-            proj.save(),
-            user.save()
-        ]);
-    })
+    project.addTeamMember(user);
+    user.addAssignedProject(project);
+    return Promise.all([
+        project.save(),
+        user.save()
+    ]);
 };
 
 module.exports.Project = Project;

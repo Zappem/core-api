@@ -24,15 +24,16 @@ module.exports = {
 
     accessibleProjects: function(user){
         var obj = this;
-        return new Promise(function(resolve, reject){
-            obj.findById(user._id).then(function(user) {
+        //return new Promise(function(resolve, reject){
+            //obj.findById(user._id).then(function(user) {
                 var ids = [];
                 user.projects.forEach(function (project) {
                     ids.push(project.project_id);
                 });
-                resolve(ids);
-            });
-        });
+                return ids;
+                //resolve(ids);
+            //});
+        //});
     },
 
     addAssignedException: function(user_id, exception_id){

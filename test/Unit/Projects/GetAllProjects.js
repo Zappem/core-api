@@ -224,4 +224,10 @@ describe('Getting all accessible by user', function(){
 
     });
 
+    // TODO: Implement this test
+    // describe('when no user is specified', function(){
+    //
+    //     it('should throw an error', function(){
+    //     })
+    // });
 });

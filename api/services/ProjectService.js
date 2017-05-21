@@ -8,16 +8,12 @@ module.exports = {
         Users: require('./UserService.js')
     },
 
-    all: function(user){
-        return Project.find({});
-    },
-
     allAccessibleByUser: function(user){
         // Get an array of project ID's they have access to,
-        return UserService.accessibleProjects(user).then(function(projects) {
-            return Project.find({
-                _id: {$in: projects}
-            });
+        if (user === undefined) throw new Error("No user specified");
+        var projects = UserService.accessibleProjects(user);
+        return Project.find({
+            _id: {$in: projects}
         });
     },
 
@@ -40,33 +36,31 @@ module.exports = {
         return create.save();
     },
 
-    addTeamMembers: function(project_id, data){
+    addTeamMembers: function(project, data){
         // TODO: Validation
-        return this.findById(project_id).then(function(project) {
-            var getTeam = [],
-                user = null;
-            data.team.forEach(function (userid) {
-                // Make an EmbeddedUser object and push it in.
-                user = UserService.findById(userid);
-                getTeam.push(user);
-            });
-
-            return Promise.all(getTeam).then(function (users) {
-                users.forEach(function (user) {
-                    project.addTeamMember(user);
-                    user.addAssignedProject(project).save();
-                });
-                return project.save();
-            })
+        var getTeam = [],
+            user = null;
+        data.team.forEach(function (userid) {
+            // Make an EmbeddedUser object and push it in.
+            user = UserService.findById(userid);
+            getTeam.push(user);
         });
+
+        return Promise.all(getTeam).then(function (users) {
+            users.forEach(function (user) {
+                project.addTeamMember(user);
+                user.addAssignedProject(project).save();
+                // TODO: Update tokens too
+            });
+            return project.save();
+        })
     },
 
-    revokeTeamMembers: function(project_id, data){
-        return this.findById(project_id).then(function(project) {
-            data.team.forEach(function (user) {
-                project.removeTeamMember(user);
-            })
+    revokeTeamMembers: function(project, data){
+        data.team.forEach(function (user) {
+            project.removeTeamMember(user);
         });
+        return project.save();
     },
 
     updateById: function(id, data){

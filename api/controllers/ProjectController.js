@@ -33,14 +33,18 @@ module.exports = {
     },
 
     addTeamMembers: function(req, res){
-        ProjectService.addTeamMembers(req.params.id, req.body).then(function(proj){
-            res.json(proj);
+        ProjectService.findById(req.params.id).then(function(project){
+            ProjectService.addTeamMembers(project, req.body).then(function(proj){
+                res.json(proj);
+            });
         });
     },
 
     removeTeamMembers: function(req, res){
-        ProjectService.revokeTeamMembers(req.params.id, req.body).then(function(proj){
-            res.json(proj);
+        ProjectService.findById(req.params.id).then(function(project){
+            ProjectService.revokeTeamMembers(project, req.body).then(function(proj){
+                res.json(proj);
+            });
         });
     }
 };
