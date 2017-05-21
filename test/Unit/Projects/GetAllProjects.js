@@ -216,8 +216,12 @@ describe('Getting all accessible by user', function(){
 
         it('should contain the project ids we assigned', function (done) {
             ProjectService.allAccessibleByUser(user).then(function (projects) {
-                chai.expect(projects[0]._id).to.equal(project1._id);
-                chai.expect(projects[1]._id).to.equal(project2._id);
+                var projectids = [];
+                projects.forEach(function(project){
+                    projectids.push(project._id);
+                });
+                chai.expect(projectids).to.contain(project1._id);
+                chai.expect(projectids).to.contain(project2._id);
                 done();
             });
         });

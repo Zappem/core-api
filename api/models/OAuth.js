@@ -25,18 +25,18 @@ class OAuthClients extends Document {
     }
 }
 
-class OAuthUsers extends Document {
-    constructor(){
-        super();
-        this.email = { type: String, default: '' };
-        this.firstname = { type: String };
-        this.lastname = { type: String };
-        this.password = { type: String };
-        this.username = { type: String };
-    }
-}
-
 module.exports.clients = OAuthClients;
+
+module.exports.updateTokens = function(user_id, data){
+    var actions = [];
+    return OAuthTokens.find({userId: user_id}).then(function(users){
+         users.forEach(function(user){
+             user = data;
+             actions.push(user.save());
+         });
+         return Promise.all(actions);
+    });
+};
 
 module.exports.getAccessToken = function(bearerToken){
     return OAuthTokens.findOne({accessToken: bearerToken});

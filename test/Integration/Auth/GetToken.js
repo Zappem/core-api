@@ -1,13 +1,13 @@
-var chai = require('../TestCase.js');
-var User = require('../../api/models/UserModel.js');
+var chai = require('../../TestCase.js');
+var User = require('../../../api/models/UserModel.js');
 
 var createUser = function(){
-    return User.create({
+    return chai.helpers.users.make({
         first_name: "Dan",
         last_name: "Johnson",
         email: "tests@example.com",
         password: "password"
-    }).save();
+    });
 };
 
 var makeValidAuthoriseRequest = function(callback){

@@ -22,18 +22,11 @@ module.exports = {
         return User.find({"project.project_id": id});
     },
 
-    accessibleProjects: function(user){
-        var obj = this;
-        //return new Promise(function(resolve, reject){
-            //obj.findById(user._id).then(function(user) {
-                var ids = [];
-                user.projects.forEach(function (project) {
-                    ids.push(project.project_id);
-                });
-                return ids;
-                //resolve(ids);
-            //});
-        //});
+    addAssignedProject: function(user, project){
+        return Promise.all([
+            user.addAssignedProject(project).save(),
+            OAuth.updateTokens(user._id, user)
+        ]);
     },
 
     addAssignedException: function(user_id, exception_id){

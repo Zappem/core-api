@@ -11,10 +11,12 @@ module.exports = {
     allAccessibleByUser: function(user){
         // Get an array of project ID's they have access to,
         if (user === undefined) throw new Error("No user specified");
-        var projects = UserService.accessibleProjects(user);
-        return Project.find({
-            _id: {$in: projects}
-        });
+        return Project.find({"team.user_id":user._id});
+
+        // var projects = UserService.accessibleProjects(user);
+        // return Project.find({
+        //     _id: {$in: projects}
+        // });
     },
 
     findById: function(id){
@@ -49,8 +51,7 @@ module.exports = {
         return Promise.all(getTeam).then(function (users) {
             users.forEach(function (user) {
                 project.addTeamMember(user);
-                user.addAssignedProject(project).save();
-                // TODO: Update tokens too
+                UserService.addAssignedProject(user, project);
             });
             return project.save();
         })

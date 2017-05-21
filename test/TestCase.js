@@ -9,7 +9,8 @@ chai.server = require('../api/index.js');
 
 chai.helpers = {
     users: require('./helpers/users.js'),
-    projects: require('./helpers/projects.js')
+    projects: require('./helpers/projects.js'),
+    auth: require('./helpers/auth.js')
 };
 
 beforeEach(function(){
